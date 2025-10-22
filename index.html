@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immortal Cultivation Idle</title>
+    
+    <!-- CSS样式 -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    
+    <!-- 配置数据模块 -->
+    <script src="js/config/realms.js?v=3.0"></script>
+    <script src="js/config/facilities.js?v=3.0"></script>
+    <script src="js/config/sects.js?v=3.0"></script>
+    <script src="js/config/division-tasks.js?v=3.0"></script>
+    <script src="js/config/events.js?v=3.0"></script>
+    <script src="js/config/combat-data.js?v=3.0"></script>
+    <script src="js/config/npcs.js?v=3.0"></script>
+    <script src="js/config/dungeons.js?v=3.0"></script>
+    <script src="js/config/technique-effects.js?v=3.0"></script>
+    
+    <!-- 工具函数模块 -->
+    <script src="js/utils/storage.js"></script>
+    <script src="js/utils/icons.js"></script>
+    <script src="js/utils/format.js"></script>
+    <script src="js/utils/helpers.js"></script>
+    
+    <!-- UI模块 -->
+    <script src="js/ui/modals.js?v=3.0"></script>
+    <script src="js/ui/notifications.js?v=3.0"></script>
+    <script src="js/ui/interface.js?v=3.0"></script>
+    
+    <!-- 系统模块 -->
+    <script src="js/systems/relationship.js?v=3.0"></script>
+    <script src="js/systems/npc.js?v=3.0"></script>
+    <script src="js/systems/division.js?v=3.0"></script>
+    
+    <!-- 核心游戏逻辑（保留legacy.js作为临时方案） -->
+    <script src="js/legacy.js?v=3.0"></script>
+    
+    <!-- 确保图标正确加载 -->
+    <script>
+        // 页面加载完成后初始化图标
+        window.addEventListener('load', function() {
+            if (typeof initIcons === 'function') {
+                initIcons();
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Immortal Cultivation Idle</h1>
+                <div class="save-info">自动保存中...</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn" onclick="toggleDarkMode()" style="padding: 6px 12px; margin: 0;" title="切换主题 (Ctrl+D)">
+                    <span id="themeIcon"></span>
+                </button>
+                <button class="btn" onclick="showShortcutHelp()" style="padding: 6px 12px; margin: 0;" title="快捷键帮助 (?)">
+                    <span id="keyboardIcon"></span>
+                </button>
+                <button class="btn" onclick="showSettings()" style="padding: 6px 12px; margin: 0;" title="设置">
+                    <span id="settingsIcon"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Left Panel: Player Stats -->
+            <div class="panel">
+                <div class="realm-display">
+                    <div class="realm-name" id="realmName">炼气期</div>
+                    <div class="realm-level" id="realmLevel">第1层</div>
+                </div>
+
+                <div id="playerStats">
+                    <!-- 核心属性（始终显示） -->
+                    <div class="stat-row">
+                        <span class="stat-label" title="主要：修炼、设施；次要：丹药、门派任务、事件">灵力</span>
+                        <span class="stat-value" id="spiritualPower">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label" title="主要：任务、交易；次要：副本、事件">灵石</span>
+                        <span class="stat-value" id="spiritStone">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label" title="主要：丹房产出、任务；次要：NPC奖励、事件">丹药</span>
+                        <span class="stat-value" id="pillCount">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">修炼天数</span>
+                        <span class="stat-value" id="totalDays">0</span>
+                    </div>
+                    
+                    <!-- 次要属性（可折叠） -->
+                    <div style="margin: 8px 0; padding: 6px 0; border-top: 1px solid #f0f0f0; cursor: pointer;" onclick="togglePlayerStats()">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 11px; color: #95a5a6;">详细信息</span>
+                            <span style="font-size: 11px; color: #95a5a6;" id="playerStatsToggle">▼</span>
+                        </div>
+                    </div>
+                    <div id="advancedStats" style="display: none;">
+                        <div class="stat-row">
+                            <span class="stat-label">灵力/秒</span>
+                            <span class="stat-value" id="spiritPerSec">0</span>
+                        </div>
+                        <div class="stat-row" id="immortalStoneRow" style="display: none;">
+                            <span class="stat-label" title="主要：Boss、副本；次要：成就">仙石</span>
+                            <span class="stat-value" id="immortalStone">0</span>
+                        </div>
+                        <div class="stat-row" id="daoFruitRow" style="display: none;">
+                            <span class="stat-label" title="主要：Boss；次要：事件、成就">道果</span>
+                            <span class="stat-value" id="daoFruit">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-bar">
+                    <div class="resource-label">突破进度</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="breakthroughProgress" style="width: 0%">0%</div>
+                        <div class="progress-fill" id="spiritProgress" style="width: 0%; position: absolute; top: 0; left: 0;">0%</div>
+                    </div>
+                </div>
+                
+                <div class="stat-row" id="sectInfo" style="display: none;">
+                    <span class="stat-label">门派</span>
+                    <span class="stat-value" id="sectName">未加入</span>
+                </div>
+                
+                <div class="stat-row" id="elementInfo" style="display: none;">
+                    <span class="stat-label">五行属性</span>
+                    <span class="stat-value" id="elementName">-</span>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <button class="btn btn-primary" id="cultivateBtn" onclick="cultivate()">
+                        <span id="cultivateBtnText">修炼 (+0/s)</span>
+                    </button>
+                    <button class="btn" id="breakthroughBtn" onclick="breakthrough()" disabled>突破境界</button>
+                    <button class="btn" id="pillBtn" onclick="usePill()" disabled>使用丹药</button>
+                    <button class="btn" id="usePillBtn" onclick="usePill()" disabled style="display:none;">使用丹药</button>
+                    <button class="btn" id="autoModeBtn" onclick="toggleAutoMode()">
+                        <span id="autoModeText"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Center Panel: Main Content -->
+            <div class="panel">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('cultivation-system')">修炼系统</button>
+                    <button class="tab" onclick="switchTab('resources')">资源生产</button>
+                    <button class="tab" onclick="switchTab('power')">战力提升</button>
+                    <button class="tab" onclick="switchTab('combat')">战斗冒险</button>
+                    <button class="tab" onclick="switchTab('sect')">门派系统</button>
+                    <button class="tab" onclick="switchTab('relationships')">人际关系</button>
+                    <button class="tab" onclick="switchTab('immortal')">仙界飞升</button>
+                    <button class="tab" onclick="switchTab('achievements')">成就系统</button>
+                    <button class="tab" onclick="switchTab('save')">存档管理</button>
+                </div>
+
+                <!-- 1. 修炼系统 (设施+功法+五行) -->
+                <div id="cultivation-system-tab" class="tab-content active">
+                    <div class="panel-title">修炼系统 Cultivation System</div>
+                    
+                    <!-- 设施管理 -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-home"></span> 设施管理 Facilities</h3>
+                        <div id="facilitiesList"></div>
+                    </div>
+                    
+                    <!-- 功法修炼 -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-book"></span> 功法修炼 Techniques</h3>
+                        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">修炼功法可以提升灵力获取效率</p>
+                        <div id="cultivationList"></div>
+                    </div>
+                </div>
+
+                <!-- 2. 资源生产 (炼丹+灵田) -->
+                <div id="resources-tab" class="tab-content">
+                    <div class="panel-title">资源生产 Resource Production</div>
+                    
+                    <!-- 炼丹系统 -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-beaker"></span> 炼丹系统 Alchemy</h3>
+                        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">消耗灵石炼制丹药，加速修炼</p>
+                        <div id="alchemyList"></div>
+                    </div>
+                    
+                    <!-- 灵田种植 -->
+                    <div>
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-home"></span> 灵田种植 Spirit Field</h3>
+                        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">灵田会自动产出灵石和资源（通过设施管理升级）</p>
+                        <div id="spiritFieldInfo"></div>
+                    </div>
+                </div>
+
+                <!-- 3. 战力提升 (装备+技能+天赋) -->
+                <div id="power-tab" class="tab-content">
+                    <div class="panel-title">战力提升 Power Enhancement</div>
+                    
+                    <!-- 装备法宝 -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-sword"></span> 装备法宝 Equipment</h3>
+                        <div id="equipmentContent"></div>
+                    </div>
+                    
+                    <!-- 战斗技能 -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-zap"></span> 战斗技能 Combat Skills</h3>
+                        <div id="combatSkillsContent"></div>
+                    </div>
+                    
+                    <!-- 天赋系统 -->
+                    <div>
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-sparkles"></span> 天赋系统 Talents</h3>
+                        <div id="talentsContent"></div>
+                    </div>
+                </div>
+
+                <!-- 4. 战斗冒险 (Boss+副本+竞技) -->
+                <div id="combat-tab" class="tab-content">
+                    <div class="panel-title">战斗冒险 Combat & Adventure</div>
+                    <div id="combatContent"></div>
+                </div>
+
+                <!-- 5. 门派系统 -->
+                <div id="sect-tab" class="tab-content">
+                    <div class="panel-title">门派系统 Sect System</div>
+                    <div id="sectContent"></div>
+                </div>
+
+                <!-- 6. 人际关系 -->
+                <div id="relationships-tab" class="tab-content">
+                    <div class="panel-title">人际关系 Relationships</div>
+                    <div id="relationshipsContent"></div>
+                </div>
+
+                <!-- 7. 仙界飞升 (飞升+仙界设施+轮回) -->
+                <div id="immortal-tab" class="tab-content">
+                    <div class="panel-title">仙界飞升 Immortal Ascension</div>
+                    
+                    <!-- 飞升功能 -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-star"></span> 飞升系统 Ascension</h3>
+                        <div id="ascensionContent"></div>
+                    </div>
+                    
+                    <!-- 仙界设施 -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-star"></span> 仙界设施 Immortal Facilities</h3>
+                        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">飞升后解锁特殊设施：仙池、仙树</p>
+                        <div id="immortalFacilitiesContent"></div>
+                    </div>
+                    
+                    <!-- 轮回系统 -->
+                    <div>
+                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-refresh"></span> 轮回系统 Reincarnation</h3>
+                        <div id="reincarnationContent"></div>
+                    </div>
+                </div>
+
+                <!-- 8. 成就系统 -->
+                <div id="achievements-tab" class="tab-content">
+                    <div class="panel-title">成就系统 Achievements</div>
+                    <div id="achievementsList"></div>
+                </div>
+                
+                <!-- 9. 存档管理 -->
+                <div id="save-tab" class="tab-content">
+                    <div class="panel-title">存档管理 Save Management</div>
+                    <div id="saveContent"></div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Event Log -->
+            <div class="panel" id="logPanel">
+                <div class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>修炼日志 Event Log</span>
+                    <button class="btn" onclick="toggleLogPanel()" style="padding: 2px 6px; margin: 0; font-size: 10px; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;" title="折叠日志">
+                        <span id="logToggleIcon">✕</span>
+                    </button>
+                </div>
+                <div class="log-panel" id="eventLog"></div>
+            </div>
+            
+            <!-- 日志展开按钮（折叠时显示） -->
+            <button class="btn" id="logExpandBtn" onclick="toggleLogPanel()" style="display: none; position: fixed; right: 20px; bottom: 20px; padding: 10px; border-radius: 50%; width: 48px; height: 48px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000;" title="展开日志">
+                <span id="logExpandIcon"></span>
+            </button>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,1101 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+
+        .header {
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            color: #2c3e50;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .save-info {
+            font-size: 11px;
+            color: #95a5a6;
+        }
+
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            transition: grid-template-columns 0.3s ease;
+        }
+
+        .main-content.log-collapsed {
+            grid-template-columns: 1fr 3fr 0fr;
+        }
+
+        .main-content.log-collapsed #logPanel {
+            width: 0;
+            min-width: 0;
+            padding: 0;
+            border: none;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .panel {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+        }
+
+        .stat-value {
+            color: #2c3e50;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .realm-display {
+            background: #f8f9fa;
+            color: #2c3e50;
+            padding: 8px 12px;
+            border-radius: 3px;
+            text-align: center;
+            margin-bottom: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .realm-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .realm-level {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .resource-bar {
+            margin: 10px 0;
+        }
+
+        .resource-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .resource-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d0d0d0;
+            background: white;
+            color: #2c3e50;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: center;
+            transition: all 0.2s;
+            margin: 3px 0;
+            font-family: inherit;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: #f8f9fa;
+            border-color: #3498db;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #229954;
+        }
+
+        /* 设施多列网格布局 */
+        .facilities-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 10px 0;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .facilities-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .facilities-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .facilities-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 功法多列网格布局 */
+        .techniques-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 10px 0;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .techniques-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .techniques-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .techniques-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 炼丹系统多列网格布局 */
+        .alchemy-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 10px 0;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .alchemy-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .alchemy-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .alchemy-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 炼制法宝系统多列网格布局 */
+        .forge-recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .forge-recipes-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .forge-recipes-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .forge-recipes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 炼制技能多列网格布局 */
+        .forging-skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .forging-skills-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .forging-skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .forging-skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 天赋系统多列网格布局 */
+        .talents-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .talents-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .talents-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .talents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Boss挑战多列网格布局 */
+        .boss-challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .boss-challenge-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .boss-challenge-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .boss-challenge-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 副本探索多列网格布局 */
+        .dungeon-exploration-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .dungeon-exploration-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .dungeon-exploration-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .dungeon-exploration-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* NPC交易布局 - 每个NPC占整行 */
+        .npc-trade-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* NPC内部交易项目网格布局 */
+        .npc-trades-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        /* 超宽屏幕优化 - 四列 */
+        @media (min-width: 1600px) {
+            .npc-trades-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持三列 */
+        @media (max-width: 1200px) {
+            .npc-trades-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 小屏幕两列 */
+        @media (max-width: 768px) {
+            .npc-trades-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 超小屏幕单列 */
+        @media (max-width: 480px) {
+            .npc-trades-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 交易项目样式优化 */
+        .trade-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s ease;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .trade-item:hover {
+            background: #e9ecef;
+            border-color: #dee2e6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .trade-item .trade-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .trade-item .trade-button {
+            margin-top: 10px;
+        }
+
+        /* 法宝背包和灵宠系统网格布局 */
+        .equipment-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .equipment-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .equipment-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .equipment-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 门派商店网格布局 */
+        .sect-shop-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .sect-shop-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .sect-shop-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 小屏幕单列 */
+        @media (max-width: 768px) {
+            .sect-shop-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .facility-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 0;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .facility-item:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+        }
+
+        .facility-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .facility-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .facility-level {
+            background: #3498db;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .facility-desc {
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .facility-benefit {
+            font-size: 11px;
+            color: #27ae60;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .facility-cost {
+            font-size: 10px;
+            color: #e67e22;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .facility-upgrade-btn {
+            width: 100%;
+            padding: 6px 12px;
+            border: 1px solid #3498db;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .facility-upgrade-btn:hover:not(:disabled) {
+            background: #2980b9;
+            border-color: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .facility-upgrade-btn:disabled {
+            background: #bdc3c7;
+            border-color: #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* 紧凑列表项样式 */
+        .facility-list-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            min-height: 60px;
+        }
+
+        .facility-list-item:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .facility-list-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .facility-list-name {
+            font-weight: 600;
+            font-size: 12px;
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+
+        .facility-list-desc {
+            font-size: 10px;
+            color: #7f8c8d;
+            margin-bottom: 2px;
+        }
+
+        .facility-list-benefit {
+            font-size: 10px;
+            color: #27ae60;
+            font-weight: 500;
+        }
+
+        .facility-list-level {
+            background: #3498db;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            min-width: 28px;
+            text-align: center;
+        }
+
+        .facility-list-cost {
+            font-size: 10px;
+            color: #e67e22;
+            font-weight: 500;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        .facility-list-btn {
+            padding: 4px 8px;
+            border: 1px solid #3498db;
+            background: #3498db;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .facility-list-btn:hover:not(:disabled) {
+            background: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .facility-list-btn:disabled {
+            background: #bdc3c7;
+            border-color: #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* 分类标题优化 */
+        .facility-category {
+            margin: 12px 0 8px 0;
+            padding: 6px 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+            border: 1px solid #e0e0e0;
+        }
+
+        .facility-category:hover {
+            background: #e9ecef;
+        }
+
+        .facility-category-toggle {
+            font-size: 11px;
+            color: #95a5a6;
+        }
+
+
+        /* 五行属性多列布局 */
+        .elements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        /* 响应式优化 */
+        @media (min-width: 1400px) {
+            .elements-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .elements-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        /* 装备系统多列布局 - 已在上方定义 */
+
+        /* 装备槽位网格 */
+        .equipment-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .elements-grid,
+            .equipment-list,
+            .equipment-slots {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 成就系统标签页布局 */
+        .achievement-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 15px;
+            padding: 4px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .achievement-tab {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: #495057;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .achievement-tab:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .achievement-tab.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+        }
+
+        .achievement-tab-count {
+            background: rgba(0, 0, 0, 0.1);
+            color: inherit;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .achievement-tab.active .achievement-tab-count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .achievement-content {
+            min-height: 300px;
+        }
+
+        /* 成就列表网格布局 */
+        .achievement-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        /* 超宽屏幕优化 - 三列 */
+        @media (min-width: 1400px) {
+            .achievement-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* 中等屏幕保持两列 */
+        @media (max-width: 1200px) {
+            .achievement-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .achievement-tabs {
+                flex-direction: column;
+                gap: 2px;
+            }
+            
+            .achievement-tab {
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .achievement-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .log-panel {
+            height: 300px;
+            overflow-y: auto;
+            background: #fafafa;
+            padding: 10px;
+            border-radius: 3px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .log-time {
+            color: #95a5a6;
+            margin-right: 8px;
+        }
+
+        .log-important {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .log-success {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+            padding-bottom: 5px;
+        }
+
+        .tab {
+            padding: 10px 18px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-bottom: 3px solid transparent;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 13px;
+            color: #7f8c8d;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea22, #764ba222);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tab:hover::before {
+            opacity: 1;
+        }
+
+        .tab:hover {
+            color: #2c3e50;
+            transform: translateY(-2px);
+            border-color: #3498db;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+        }
+
+        .tab.active {
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom-color: #667eea;
+            font-weight: 600;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab.active::before {
+            opacity: 0;
+        }
+
+        body.dark-mode .tab {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+            color: #b0b0b0;
+        }
+
+        body.dark-mode .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content.log-collapsed {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .number-big {
+            font-size: 20px;
+            font-weight: 700;
+            color: #3498db;
+        }
+
+        .cost-info {
+            font-size: 11px;
+            color: #e67e22;
+            margin-top: 5px;
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            background: #f39c12;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            margin: 3px;
+        }
+
+        /* 副本探索动画 */
+        @keyframes loading {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .dungeon-event-choice {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0,0,0,0.8) !important;
+            z-index: 999999 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .modal-content {
+            background: white !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+            margin: auto !important;
+            position: relative !important;
+            max-width: 600px !important;
+            width: 90% !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+        }
