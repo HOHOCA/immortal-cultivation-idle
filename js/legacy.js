@@ -2650,9 +2650,9 @@
                 const activeTab = document.querySelector('.tab.active');
                 if (activeTab) {
                     const tabText = activeTab.textContent;
-                    if (tabText.includes('设施')) {
+                    // 修炼系统主Tab内包含设施与功法两块内容
+                    if (tabText.includes('修炼系统')) {
                         renderFacilities();
-                    } else if (tabText.includes('功法')) {
                         renderCultivation();
                     } else if (tabText.includes('装备')) {
                         renderEquipment();
@@ -2915,6 +2915,25 @@
             gameData.player.spiritualPower += gain;
             addLog(`专注修炼一天，获得 ${gain} 点灵力`);
             updateUI();
+        }
+
+        // 安全尝试突破 - 由按钮点击触发
+        function attemptBreakthrough() {
+            const player = gameData.player;
+            let realm, currentLevel;
+            if (player.isInImmortalWorld) {
+                realm = immortalRealms[player.immortalRealm];
+                currentLevel = player.immortalRealmLevel;
+            } else {
+                realm = realms[player.realm];
+                currentLevel = player.realmLevel;
+            }
+            const required = realm.spiritRequired * currentLevel;
+            if (player.spiritualPower >= required) {
+                breakthrough();
+            } else {
+                showNotification(`灵力不足（需要 ${formatNumber(required)}）`, 'warning');
+            }
         }
 
         // 突破境界
@@ -8626,9 +8645,23 @@
             }
             
             // 更新按钮状态
-            const required = realm.spiritRequired * player.realmLevel;
+            const currentLevel = player.isInImmortalWorld ? player.immortalRealmLevel : player.realmLevel;
+            const required = realm.spiritRequired * currentLevel;
             const canBreakthrough = player.spiritualPower >= required;
-            document.getElementById('breakthroughBtn').disabled = !canBreakthrough;
+
+            // 更新突破按钮状态
+            const breakthroughBtn = document.getElementById('breakthroughBtn');
+            if (breakthroughBtn) {
+                breakthroughBtn.disabled = !canBreakthrough;
+                if (canBreakthrough) {
+                    breakthroughBtn.classList.add('btn-primary');
+                } else {
+                    breakthroughBtn.classList.remove('btn-primary');
+                }
+                breakthroughBtn.title = canBreakthrough
+                    ? '点击突破境界'
+                    : `需要 ${formatNumber(required)} 灵力才能突破`;
+            }
             const canUsePill = player.pills > 0;
             const pillBtn = document.getElementById('pillBtn');
             const usePillBtn = document.getElementById('usePillBtn');
