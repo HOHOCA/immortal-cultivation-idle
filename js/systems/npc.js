@@ -426,6 +426,29 @@ function interactWithNPC(npcId, interactionType) {
         return;
     }
     
+    // 检查每日互动次数限制（不包括特殊事件）
+    if (!interaction.special) {
+        // 初始化每日互动计数
+        if (!npc.dailyInteractionCount) {
+            npc.dailyInteractionCount = 0;
+            npc.dailyInteractionDate = new Date().toDateString();
+        }
+        
+        // 检查是否是新的一天，如果是则重置计数
+        const today = new Date().toDateString();
+        if (npc.dailyInteractionDate !== today) {
+            npc.dailyInteractionCount = 0;
+            npc.dailyInteractionDate = today;
+        }
+        
+        // 检查是否达到每日上限
+        const dailyLimit = 10;
+        if (npc.dailyInteractionCount >= dailyLimit) {
+            showNotification(`今日与${npc.name}的互动次数已达上限（${dailyLimit}次）`, 'warning');
+            return;
+        }
+    }
+    
     // 检查冷却时间
     const lastInteraction = npc.lastInteractions?.[interactionType] || 0;
     const cooldownRemaining = interaction.cooldown - (Date.now() - lastInteraction);
@@ -456,6 +479,11 @@ function interactWithNPC(npcId, interactionType) {
     
     // 更新关系等级
     updateNPCRelationshipLevel(npcId);
+    
+    // 增加每日互动次数（不包括特殊事件）
+    if (!interaction.special) {
+        npc.dailyInteractionCount = (npc.dailyInteractionCount || 0) + 1;
+    }
     
     // 记录互动
     npc.lastInteractions = npc.lastInteractions || {};
@@ -758,7 +786,7 @@ function showRelationshipLevelUp(npcId, newLevel) {
     
     const card = document.createElement('div');
     card.style.cssText = `
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white; padding: 30px; border-radius: 8px;
         max-width: 500px; width: 90%; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         text-align: center;
@@ -781,7 +809,7 @@ function showRelationshipLevelUp(npcId, newLevel) {
             <div style="font-size: 14px;">${levelData.benefits.join('、')}</div>
         </div>
         <button class="btn" onclick="this.parentElement.parentElement.remove(); checkNPCRewards('${npcId}', ${newLevel});" 
-                style="background: white; color: #667eea; font-weight: 600;">
+                style="background: white; color: #3b82f6; font-weight: 600;">
             太好了！
         </button>
     `;
@@ -957,8 +985,9 @@ function showTechniqueLearnModal(npcId, npcConfig, availableTechniques) {
             html += `已学会`;
             html += `</div>`;
         } else if (!tech.isUnlocked) {
-            html += `<div style="position: absolute; top: 15px; right: 15px; background: #6c757d; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">`;
-            html += `🔒 未解锁`;
+            html += `<div style="position: absolute; top: 15px; right: 15px; background: #6c757d; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;">`;
+            html += `<svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/></svg>`;
+            html += `未解锁`;
             html += `</div>`;
         }
         
@@ -977,8 +1006,9 @@ function showTechniqueLearnModal(npcId, npcConfig, availableTechniques) {
             html += `学习此功法`;
             html += `</button>`;
         } else if (tech.isLearned) {
-            html += `<div style="text-align: center; color: #28a745; font-size: 13px; font-weight: 600;">`;
-            html += `✓ 你已掌握此功法`;
+            html += `<div style="text-align: center; color: #28a745; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">`;
+            html += `<svg width="16" height="16" viewBox="0 0 24 24" fill="#28a745"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>`;
+            html += `你已掌握此功法`;
             html += `</div>`;
         } else {
             html += `<div style="text-align: center; color: #6c757d; font-size: 13px;">`;
@@ -1019,7 +1049,8 @@ function learnTechniqueFromMaster(npcId, techniqueId) {
     const techName = getTechniqueName(techniqueId);
     
     // 添加日志和通知
-    addLog(`<span class="log-success">📖 你从${npcConfig.name}处学会了「${techName}」！</span>`);
+    const bookIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M18,22A2,2 0 0,0 20,20V4C20,2.89 19.1,2 18,2H12V9L9.5,7.5L7,9V2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18Z"/></svg>';
+    addLog(`<span class="log-success">${bookIcon}你从${npcConfig.name}处学会了「${techName}」！</span>`);
     showNotification(`学会了${techName}！`, 'success');
     
     // 根据功法提升玩家属性
@@ -1143,15 +1174,15 @@ function showGuestMasterCeremony(npcId, npcConfig) {
     let html = '';
     
     html += `<div style="text-align: center; margin-bottom: 25px;">`;
-    html += `<div style="font-size: 48px; margin-bottom: 15px;">🎓</div>`;
-    html += `<h2 style="margin: 0 0 10px 0; font-size: 24px; color: #9b59b6;">`;
+    html += `<svg width="48" height="48" viewBox="0 0 24 24" fill="#3b82f6" style="margin-bottom: 15px;"><path d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"/></svg>`;
+    html += `<h2 style="margin: 0 0 10px 0; font-size: 24px; color: #3b82f6;">`;
     html += `拜客座师傅`;
     html += `</h2>`;
     html += `</div>`;
     
     html += `<div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 25px;">`;
     html += `<div style="font-size: 13px; color: #7f8c8d; margin-bottom: 12px;">你恭敬地向${npcConfig.name}行礼</div>`;
-    html += `<div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #9b59b6; margin-bottom: 12px;">`;
+    html += `<div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 12px;">`;
     html += `<div style="font-size: 14px; color: #2c3e50; line-height: 1.8;">`;
     html += `"晚辈仰慕前辈修为，恳请拜入门下，学习贵派绝学！"`;
     html += `</div>`;
@@ -1165,21 +1196,21 @@ function showGuestMasterCeremony(npcId, npcConfig) {
     html += `</div>`;
     html += `</div>`;
     
-    html += `<div style="background: rgba(155,89,182,0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px;">`;
-    html += `<div style="font-size: 14px; font-weight: 600; color: #9b59b6; margin-bottom: 12px; text-align: center;">`;
+    html += `<div style="background: rgba(59,130,246,0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px;">`;
+    html += `<div style="font-size: 14px; font-weight: 600; color: #3b82f6; margin-bottom: 12px; text-align: center;">`;
     html += `客座师傅说明`;
     html += `</div>`;
     html += `<div style="font-size: 13px; color: #555; line-height: 2;">`;
     html += `<div style="display: flex; align-items: center; margin-bottom: 6px;">`;
-    html += `<svg width="16" height="16" viewBox="0 0 24 24" fill="#9b59b6" style="margin-right: 8px; flex-shrink: 0;"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>`;
+    html += `<svg width="16" height="16" viewBox="0 0 24 24" fill="#3b82f6" style="margin-right: 8px; flex-shrink: 0;"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>`;
     html += `<span>可以学习客座师傅的所有功法</span>`;
     html += `</div>`;
     html += `<div style="display: flex; align-items: center; margin-bottom: 6px;">`;
-    html += `<svg width="16" height="16" viewBox="0 0 24 24" fill="#9b59b6" style="margin-right: 8px; flex-shrink: 0;"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>`;
+    html += `<svg width="16" height="16" viewBox="0 0 24 24" fill="#3b82f6" style="margin-right: 8px; flex-shrink: 0;"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>`;
     html += `<span>可以拜多位客座师傅</span>`;
     html += `</div>`;
     html += `<div style="display: flex; align-items: center; margin-bottom: 6px;">`;
-    html += `<svg width="16" height="16" viewBox="0 0 24 24" fill="#9b59b6" style="margin-right: 8px; flex-shrink: 0;"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>`;
+    html += `<svg width="16" height="16" viewBox="0 0 24 24" fill="#3b82f6" style="margin-right: 8px; flex-shrink: 0;"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>`;
     html += `<span>与正式师傅一样可以"请教功法"</span>`;
     html += `</div>`;
     html += `<div style="display: flex; align-items: center;">`;
@@ -1200,7 +1231,8 @@ function showGuestMasterCeremony(npcId, npcConfig) {
     document.body.appendChild(modal);
     
     // 添加日志
-    addLog(`<span class="log-success">🎓 你拜${npcConfig.name}为客座师傅！</span>`);
+    const graduationIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"/></svg>';
+    addLog(`<span class="log-success">${graduationIcon}你拜${npcConfig.name}为客座师傅！</span>`);
     showNotification(`拜${npcConfig.name}为客座师傅成功！`, 'success');
     
     updateUI();

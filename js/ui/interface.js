@@ -493,7 +493,8 @@ function initIcons() {
     const settingsIcon = document.getElementById('settingsIcon');
     
     if (themeIcon) {
-        themeIcon.innerHTML = gameData.darkMode ? getSvg('sun') : getSvg('moon');
+        // 检查gameData是否已初始化，避免早期调用时出错
+        themeIcon.innerHTML = (gameData && gameData.darkMode) ? getSvg('sun') : getSvg('moon');
     }
     if (keyboardIcon) {
         keyboardIcon.innerHTML = getSvg('keyboard');

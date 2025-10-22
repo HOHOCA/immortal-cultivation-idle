@@ -1301,20 +1301,20 @@ const relationshipLevels = {
     1: { 
         name: '陌生', 
         minFavor: 0, 
-        maxFavor: 20, 
+        maxFavor: 10, 
         benefits: [],
         description: '你们只是刚刚认识'
     },
     2: { 
         name: '认识', 
-        minFavor: 21, 
-        maxFavor: 40, 
+        minFavor: 11, 
+        maxFavor: 30, 
         benefits: ['basic_talk', 'simple_task'],
         description: '可以进行基本交流和简单任务'
     },
     3: { 
         name: '友好', 
-        minFavor: 41, 
+        minFavor: 31, 
         maxFavor: 60, 
         benefits: ['gift', 'advice', 'resource_sharing'],
         description: '可以赠送礼物、获得建议、共享资源'
@@ -1322,13 +1322,13 @@ const relationshipLevels = {
     4: { 
         name: '亲密', 
         minFavor: 61, 
-        maxFavor: 80, 
+        maxFavor: 85, 
         benefits: ['teach_skill', 'combat_support', 'special_task'],
         description: '可以学习技能、获得战斗支援、接取特殊任务'
     },
     5: { 
         name: '挚友', 
-        minFavor: 81, 
+        minFavor: 86, 
         maxFavor: 100, 
         benefits: ['full_support', 'secret_techniques', 'ascension_together'],
         description: '获得全面支持、秘传功法、可以一起飞升'
@@ -1342,7 +1342,7 @@ const interactionTypes = {
         name: '简单问候',
         favorGain: 1,
         cost: {},
-        cooldown: 60000, // 60秒
+        cooldown: 180000, // 3分钟
         description: '向对方打个招呼，表示友好',
         requirements: { minLevel: 1 },
         dialogue: true
@@ -1351,7 +1351,7 @@ const interactionTypes = {
         name: '观察学习',
         favorGain: 1,
         cost: {},
-        cooldown: 60000, // 60秒
+        cooldown: 180000, // 3分钟
         description: '默默观察对方的行为，学习经验',
         requirements: { minLevel: 1 },
         dialogue: true
@@ -1360,9 +1360,9 @@ const interactionTypes = {
     // 正面互动（等级2+）
     gift: {
         name: '赠送礼物',
-        favorGain: 10,
+        favorGain: 6,
         cost: { spiritStone: 100 },
-        cooldown: 60000, // 60秒
+        cooldown: 180000, // 3分钟
         description: '赠送灵石表达心意',
         requirements: { minLevel: 2 },
         dialogue: true
@@ -1371,16 +1371,16 @@ const interactionTypes = {
         name: '闲聊',
         favorGain: 2,
         cost: {},
-        cooldown: 60000, // 60秒
+        cooldown: 180000, // 3分钟
         description: '与对方聊天增进感情',
         requirements: { minLevel: 2 },
         dialogue: true
     },
     help_cultivate: {
         name: '帮助修炼',
-        favorGain: 8,
+        favorGain: 5,
         cost: { spiritualPower: 100 },
-        cooldown: 60000, // 60秒
+        cooldown: 180000, // 3分钟
         description: '帮助对方修炼，增加对方成长速度',
         requirements: { minLevel: 3 },
         effect: { growthBonus: 0.1 },
@@ -1390,7 +1390,7 @@ const interactionTypes = {
         name: '切磋武艺',
         favorGain: 5,
         cost: { spiritualPower: 50 },
-        cooldown: 60000, // 60秒
+        cooldown: 180000, // 3分钟
         description: '与对方切磋，增进了解',
         requirements: { minLevel: 3 },
         dialogue: true
@@ -1399,7 +1399,7 @@ const interactionTypes = {
         name: '请求介绍',
         favorGain: 3,
         cost: { spiritStone: 50 },
-        cooldown: 60000, // 60秒
+        cooldown: 180000, // 3分钟
         description: '请对方介绍认识其他修士',
         requirements: { minLevel: 3 },
         effect: { meetNewNPC: true },

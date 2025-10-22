@@ -75,29 +75,115 @@ function deepClone(obj) {
     return cloned;
 }
 
-// 防抖函数
-function debounce(func, wait) {
+// ========== 防抖节流函数（增强版） ==========
+
+/**
+ * 防抖函数 - 延迟执行，多次触发只执行最后一次
+ * @param {Function} func - 要防抖的函数
+ * @param {Number} wait - 等待时间（毫秒）
+ * @param {Boolean} immediate - 是否立即执行
+ * @returns {Function} 防抖后的函数
+ */
+function debounce(func, wait, immediate = false) {
     let timeout;
-    return function executedFunction(...args) {
+    
+    const debounced = function executedFunction(...args) {
+        const context = this;
+        
         const later = () => {
-            clearTimeout(timeout);
-            func(...args);
+            timeout = null;
+            if (!immediate) func.apply(context, args);
         };
+        
+        const callNow = immediate && !timeout;
+        
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
+        
+        if (callNow) func.apply(context, args);
     };
+    
+    // 添加取消方法
+    debounced.cancel = function() {
+        clearTimeout(timeout);
+        timeout = null;
+    };
+    
+    return debounced;
 }
 
-// 节流函数
-function throttle(func, limit) {
-    let inThrottle;
-    return function(...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
+/**
+ * 节流函数 - 限制执行频率
+ * @param {Function} func - 要节流的函数  
+ * @param {Number} limit - 时间限制（毫秒）
+ * @param {Object} options - 配置选项 {leading: true, trailing: true}
+ * @returns {Function} 节流后的函数
+ */
+function throttle(func, limit, options = {}) {
+    let timeout, lastRan;
+    const { leading = true, trailing = true } = options;
+    
+    const throttled = function(...args) {
+        const context = this;
+        
+        if (!lastRan && !leading) {
+            lastRan = Date.now();
+        }
+        
+        const timeSinceLastRun = Date.now() - (lastRan || 0);
+        
+        const runFunc = () => {
+            lastRan = Date.now();
+            func.apply(context, args);
+        };
+        
+        if (timeSinceLastRun >= limit) {
+            runFunc();
+        } else if (trailing) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                runFunc();
+            }, limit - timeSinceLastRun);
         }
     };
+    
+    // 添加取消方法
+    throttled.cancel = function() {
+        clearTimeout(timeout);
+        timeout = null;
+        lastRan = null;
+    };
+    
+    return throttled;
+}
+
+/**
+ * 请求动画帧节流 - 用于滚动、动画等高频事件
+ * @param {Function} func - 要节流的函数
+ * @returns {Function} RAF节流后的函数
+ */
+function throttleRAF(func) {
+    let rafId = null;
+    
+    const throttled = function(...args) {
+        const context = this;
+        
+        if (rafId === null) {
+            rafId = requestAnimationFrame(() => {
+                func.apply(context, args);
+                rafId = null;
+            });
+        }
+    };
+    
+    throttled.cancel = function() {
+        if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+    };
+    
+    return throttled;
 }
 
 // 随机数生成

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/dark-mode.css">
     
     <!-- 配置数据模块 -->
+    <script src="js/config/constants.js?v=3.1"></script>
     <script src="js/config/realms.js?v=3.0"></script>
     <script src="js/config/facilities.js?v=3.0"></script>
     <script src="js/config/sects.js?v=3.0"></script>
@@ -20,11 +21,15 @@
     <script src="js/config/dungeons.js?v=3.0"></script>
     <script src="js/config/technique-effects.js?v=3.0"></script>
     
+    <!-- 核心模块（新增）-->
+    <script src="js/core/state-manager.js?v=3.1"></script>
+    
     <!-- 工具函数模块 -->
-    <script src="js/utils/storage.js"></script>
-    <script src="js/utils/icons.js"></script>
+    <script src="js/utils/storage.js?v=3.1"></script>
+    <script src="js/utils/icons.js?v=3.1"></script>
     <script src="js/utils/format.js"></script>
-    <script src="js/utils/helpers.js"></script>
+    <script src="js/utils/helpers.js?v=3.1"></script>
+    <script src="js/utils/batch-operations.js?v=3.1"></script>
     
     <!-- UI模块 -->
     <script src="js/ui/modals.js?v=3.0"></script>
@@ -242,7 +247,7 @@
                     <div id="relationshipsContent"></div>
                 </div>
 
-                <!-- 7. 仙界飞升 (飞升+仙界设施+轮回) -->
+                <!-- 7. 仙界飞升 -->
                 <div id="immortal-tab" class="tab-content">
                     <div class="panel-title">仙界飞升 Immortal Ascension</div>
                     
@@ -253,16 +258,10 @@
                     </div>
                     
                     <!-- 仙界设施 -->
-                    <div style="margin-bottom: 30px;">
+                    <div>
                         <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-star"></span> 仙界设施 Immortal Facilities</h3>
                         <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">飞升后解锁特殊设施：仙池、仙树</p>
                         <div id="immortalFacilitiesContent"></div>
-                    </div>
-                    
-                    <!-- 轮回系统 -->
-                    <div>
-                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-refresh"></span> 轮回系统 Reincarnation</h3>
-                        <div id="reincarnationContent"></div>
                     </div>
                 </div>
 
@@ -283,7 +282,7 @@
             <div class="panel" id="logPanel">
                 <div class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
                     <span>修炼日志 Event Log</span>
-                    <button class="btn" onclick="toggleLogPanel()" style="padding: 2px 6px; margin: 0; font-size: 10px; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;" title="折叠日志">
+                    <button class="btn" onclick="toggleLogPanel()" style="padding: 4px; margin: 0; font-size: 12px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #f8f9fa; border: 1px solid #dee2e6; color: #6c757d;" title="折叠日志">
                         <span id="logToggleIcon">✕</span>
                     </button>
                 </div>

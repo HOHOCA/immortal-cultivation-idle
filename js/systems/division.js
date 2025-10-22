@@ -186,7 +186,7 @@ function showDivisionTasksModal() {
         const progress = Math.min(100, (elapsed / task.duration) * 100);
         const remaining = Math.max(0, task.duration - elapsed);
         
-        html += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">`;
+        html += `<div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">`;
         html += `<div style="font-size: 14px; font-weight: 600; margin-bottom: 10px;">进行中的任务</div>`;
         html += `<div style="font-size: 16px; font-weight: 600; margin-bottom: 10px;">${taskConfig?.name || '未知任务'}</div>`;
         html += `<div style="margin-bottom: 10px;">`;

@@ -1,7 +1,9 @@
 // 临时文件：包含所有原有逻辑
 // TODO: 逐步拆分到各个模块
 
-// SVG图标系统
+// SVG图标系统 - 已移至 js/utils/icons.js
+// 下方代码已注释，使用icons.js中的定义
+/* 
         const svgIcons = {
             moon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
             sun: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><path d="M12 1v6m0 6v6m8.66-11.66l-4.24 4.24m-4.24 4.24l-4.24 4.24m11.66-12.24l-4.24 4.24m-4.24 4.24l-4.24 4.24M23 12h-6m-6 0H1"/></svg>',
@@ -51,9 +53,11 @@
         function getSvg(name) {
             return svgIcons[name] || '';
         }
+*/
+// 注释结束 - SVG图标系统现在由 js/utils/icons.js 提供
 
-        // 游戏数据
-        const gameData = {
+        // 游戏数据 - 使用 state-manager.js 中声明的全局变量
+        gameData = {
             // 玩家状态
             player: {
                 realm: 0, // 境界索引
@@ -186,10 +190,6 @@
             dungeonProgress: {}, // 副本进度
             dungeonAttempts: 0, // 今日副本次数
             lastDungeonReset: Date.now(), // 上次重置时间
-            
-            // 轮回系统
-            reincarnations: 0, // 轮回次数
-            reincarnationBonuses: {}, // 轮回加成
             
             // 统计数据
             statistics: {
@@ -1363,7 +1363,7 @@
                 ]
             },
             
-            reincarnation_memory: {
+            past_life_memory: {
                 name: '🌟 前世记忆',
                 desc: '飞升后的你偶尔会回忆起前世的修炼经历...',
                 type: 'opportunity',
@@ -2153,6 +2153,11 @@
             // 初始化NPC数据
             if (typeof initializeNPCData === 'function') {
                 initializeNPCData();
+            }
+            
+            // 🆕 v3.1: 检查离线收益
+            if (typeof checkOfflineReward === 'function') {
+                checkOfflineReward();
             }
             
             // 检查是否需要显示门派选择（如果玩家达到筑基期但未选择门派）
@@ -5008,7 +5013,7 @@
                         const rarityColors = {
                             common: '#95a5a6',
                             rare: '#3498db',
-                            epic: '#9b59b6',
+                            epic: '#3b82f6',
                             legendary: '#f39c12',
                             mythic: '#e74c3c'
                         };
@@ -5047,7 +5052,7 @@
                     const rarityColors = {
                         common: '#95a5a6',
                         rare: '#3498db',
-                        epic: '#9b59b6',
+                        epic: '#3b82f6',
                         legendary: '#f39c12',
                         mythic: '#e74c3c'
                     };
@@ -6240,8 +6245,8 @@
                 reward: { spiritStone: 1000 }
             },
             ascension_3: {
-                name: '三世轮回',
-                desc: '飞升3次',
+                name: '三次飞升',
+                desc: '飞升3次，解锁仙界',
                 category: 'special',
                 check: () => gameData.ascensionCount >= 3,
                 reward: { spiritStone: 5000 }
@@ -6977,7 +6982,7 @@
             },
             
             ascension_master: {
-                name: '⭐ 轮回之主',
+                name: '⭐ 飞升之主',
                 desc: '???（飞升20次）',
                 category: 'hidden',
                 hidden: true,
@@ -7180,27 +7185,28 @@
             let html = '';
             
             // 成就加成总览
-            html += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 6px; margin-bottom: 20px;">`;
-            html += `<div style="font-size: 16px; font-weight: 600; margin-bottom: 10px;">✨ 成就永久加成总览</div>`;
-            html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px;">`;
-            if (gameData.achievementBonuses.spiritualPowerBonus > 0) {
-                html += `<div>• 灵力获取 +${(gameData.achievementBonuses.spiritualPowerBonus * 100).toFixed(1)}%</div>`;
-            }
-            if (gameData.achievementBonuses.spiritStoneBonus > 0) {
-                html += `<div>• 灵石获取 +${(gameData.achievementBonuses.spiritStoneBonus * 100).toFixed(1)}%</div>`;
-            }
-            if (gameData.achievementBonuses.breakthroughBonus > 0) {
-                html += `<div>• 突破成功率 +${(gameData.achievementBonuses.breakthroughBonus * 100).toFixed(1)}%</div>`;
-            }
-            if (gameData.achievementBonuses.combatPowerBonus > 0) {
-                html += `<div>• 战斗力 +${(gameData.achievementBonuses.combatPowerBonus * 100).toFixed(1)}%</div>`;
-            }
-            if (gameData.achievementBonuses.allBonus > 0) {
-                html += `<div>• 全属性 +${(gameData.achievementBonuses.allBonus * 100).toFixed(1)}%</div>`;
-            }
+            html += `<div style="background: white; border: 1px solid #e0e0e0; padding: 15px; border-radius: 6px; margin-bottom: 15px;">`;
+            html += `<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #2c3e50;">✨ 成就永久加成总览</div>`;
+            html += `<div style="font-size: 12px; color: #7f8c8d;">`;
             const totalBonuses = Object.keys(gameData.achievementBonuses).filter(k => gameData.achievementBonuses[k] > 0).length;
             if (totalBonuses === 0) {
-                html += `<div style="grid-column: 1 / -1; text-align: center; opacity: 0.7;">暂无永久加成，完成成就即可获得</div>`;
+                html += `暂无永久加成，完成成就即可获得`;
+            } else {
+                if (gameData.achievementBonuses.spiritualPowerBonus > 0) {
+                    html += `• 灵力获取 +${(gameData.achievementBonuses.spiritualPowerBonus * 100).toFixed(1)}% `;
+                }
+                if (gameData.achievementBonuses.spiritStoneBonus > 0) {
+                    html += `• 灵石获取 +${(gameData.achievementBonuses.spiritStoneBonus * 100).toFixed(1)}% `;
+                }
+                if (gameData.achievementBonuses.breakthroughBonus > 0) {
+                    html += `• 突破成功率 +${(gameData.achievementBonuses.breakthroughBonus * 100).toFixed(1)}% `;
+                }
+                if (gameData.achievementBonuses.combatPowerBonus > 0) {
+                    html += `• 战斗力 +${(gameData.achievementBonuses.combatPowerBonus * 100).toFixed(1)}% `;
+                }
+                if (gameData.achievementBonuses.allBonus > 0) {
+                    html += `• 全属性 +${(gameData.achievementBonuses.allBonus * 100).toFixed(1)}% `;
+                }
             }
             html += `</div>`;
             html += `</div>`;
@@ -7252,9 +7258,9 @@
             }
             
             // 渲染顶部统计
-            html += `<div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 4px;">`;
-            html += `<div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">成就总览</div>`;
-            html += `<div style="display: flex; gap: 20px; font-size: 13px;">`;
+            html += `<div style="margin-bottom: 15px; padding: 15px; background: white; border: 1px solid #e0e0e0; border-radius: 6px;">`;
+            html += `<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #2c3e50;">📊 成就总览</div>`;
+            html += `<div style="display: flex; gap: 20px; font-size: 12px; color: #7f8c8d;">`;
             html += `<div>总进度: ${completedCount}/${totalCount}</div>`;
             html += `<div style="color: #f39c12;">待领取: ${claimableCount}</div>`;
             html += `<div>完成率: ${((completedCount/totalCount)*100).toFixed(1)}%</div>`;
@@ -7325,7 +7331,7 @@
                         
                         // 显示永久加成
                         if (achievement.bonus) {
-                            html += `<div style="font-size: 11px; color: #9b59b6; margin-top: 5px; font-weight: 600;">`;
+                            html += `<div style="font-size: 11px; color: #3b82f6; margin-top: 5px; font-weight: 600;">`;
                             html += `✨ 永久加成: `;
                             if (achievement.bonus.spiritualPowerBonus) html += `灵力+${(achievement.bonus.spiritualPowerBonus * 100).toFixed(0)}% `;
                             if (achievement.bonus.spiritStoneBonus) html += `灵石+${(achievement.bonus.spiritStoneBonus * 100).toFixed(0)}% `;
@@ -8109,7 +8115,7 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
                 color: white;
                 padding: 30px;
                 border-radius: 8px;
@@ -8278,7 +8284,7 @@
                     你已修炼至渡劫期巅峰！<br>
                     可以选择飞升仙界，开启新的修仙之旅
                 </div>
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 20px; border-left: 3px solid #667eea;">
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 20px; border-left: 3px solid #3b82f6;">
                     <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px; color: #2c3e50;">飞升奖励：</div>
                     <div style="font-size: 13px; line-height: 1.8; color: #666;">
                         • 保留所有成就和飞升加成<br>
@@ -8293,12 +8299,12 @@
                 <div style="display: flex; gap: 10px;">
                     ${gameData.ascensionCount >= 3 ? `
                     <button class="btn" onclick="enterImmortalWorld()" 
-                            style="flex: 1; background: #667eea; color: white; font-weight: 600; padding: 12px; border: none;">
+                            style="flex: 1; background: #3b82f6; color: white; font-weight: 600; padding: 12px; border: none;">
                         进入仙界（不重置）
                     </button>
                     ` : ''}
                     <button class="btn" onclick="ascend()" 
-                            style="flex: 1; background: #667eea; color: white; font-weight: 600; padding: 12px; border: none;">
+                            style="flex: 1; background: #3b82f6; color: white; font-weight: 600; padding: 12px; border: none;">
                         飞升仙界
                     </button>
                     <button class="btn" onclick="this.parentElement.parentElement.parentElement.remove()" 
@@ -8715,19 +8721,19 @@
             const playerElement = gameData.player.element;
             const elementInfo = playerElement && elementsData[playerElement] ? elementsData[playerElement] : null;
             
-            html += `<div class="facility-item" style="background: linear-gradient(135deg, #e74c3c22, #c0392b22);">`;
-            html += `<div style="font-size: 14px; font-weight: 600; color: #e74c3c;">战斗力</div>`;
-            html += `<div style="font-size: 18px; font-weight: 700; color: #e74c3c;">${combatPower}</div>`;
+            html += `<div class="facility-item" style="background: white; border: 1px solid #e0e0e0;">`;
+            html += `<div style="font-size: 14px; font-weight: 600; color: #2c3e50;">战斗力</div>`;
+            html += `<div style="font-size: 18px; font-weight: 700; color: #2c3e50;">${combatPower}</div>`;
             html += `</div>`;
             
-            html += `<div class="facility-item" style="background: linear-gradient(135deg, #3498db22, #2980b922);">`;
-            html += `<div style="font-size: 14px; font-weight: 600; color: #3498db;">五行属性</div>`;
-            html += `<div style="font-size: 16px; font-weight: 700; color: ${elementInfo ? elementInfo.color : '#95a5a6'};">${elementInfo ? elementInfo.name : '未选择'}</div>`;
+            html += `<div class="facility-item" style="background: white; border: 1px solid #e0e0e0;">`;
+            html += `<div style="font-size: 14px; font-weight: 600; color: #2c3e50;">五行属性</div>`;
+            html += `<div style="font-size: 16px; font-weight: 700; color: #7f8c8d;">${elementInfo ? elementInfo.name : '未选择'}</div>`;
             html += `</div>`;
             
-            html += `<div class="facility-item" style="background: linear-gradient(135deg, #27ae6022, #22995422);">`;
-            html += `<div style="font-size: 14px; font-weight: 600; color: #27ae60;">战斗技能</div>`;
-            html += `<div style="font-size: 16px; font-weight: 700; color: #27ae60;">${gameData.combatSkills ? gameData.combatSkills.length : 0}个</div>`;
+            html += `<div class="facility-item" style="background: white; border: 1px solid #e0e0e0;">`;
+            html += `<div style="font-size: 14px; font-weight: 600; color: #2c3e50;">战斗技能</div>`;
+            html += `<div style="font-size: 16px; font-weight: 700; color: #7f8c8d;">${gameData.combatSkills ? gameData.combatSkills.length : 0}个</div>`;
             html += `</div>`;
             html += `</div>`;
             
@@ -8741,7 +8747,7 @@
                 const hasSkill = gameData.combatSkills && gameData.combatSkills.includes(skillId);
                 const canLearn = gameData.player.realm >= (skill.requiredRealm || 0);
                 
-                html += `<div class="facility-item" style="${hasSkill ? 'background: linear-gradient(135deg, #667eea22, #764ba222); border-color: #667eea;' : ''}">`;
+                html += `<div class="facility-item" style="${hasSkill ? 'background: linear-gradient(135deg, #3b82f622, #1d4ed822); border-color: #3b82f6;' : ''}">`;
                 html += `<div style="font-size: 13px; font-weight: 600; margin-bottom: 5px;">${skill.name}</div>`;
                 html += `<div style="font-size: 11px; color: #666; margin-bottom: 6px;">${skill.desc}</div>`;
                 html += `<div style="font-size: 11px; display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 3px;">`;
@@ -8825,7 +8831,7 @@
                 
                 // 显示特色机制
                 if (dungeon.specialMechanic) {
-                    html += `<div style="font-size: 11px; color: #9b59b6; margin: 5px 0;">`;
+                    html += `<div style="font-size: 11px; color: #3b82f6; margin: 5px 0;">`;
                     html += `✨ ${dungeon.specialMechanic.name}: ${dungeon.specialMechanic.desc}`;
                     html += `</div>`;
                 }
@@ -8921,7 +8927,7 @@
             
             let html = '';
             
-            html += `<div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 6px;">`;
+            html += `<div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; border-radius: 6px;">`;
             html += `<div style="font-size: 16px; font-weight: 600; margin-bottom: 5px;">可用天赋点: ${gameData.talentPoints || 0}</div>`;
             html += `<div style="font-size: 12px; opacity: 0.9;">使用道果激活天赋，永久提升修炼效率</div>`;
             html += `</div>`;
@@ -8959,7 +8965,7 @@
                     const hasActivated = (gameData.talents || []).includes(id);
                     const canActivate = (gameData.talentPoints || 0) >= data.cost;
                     
-                    html += `<div class="facility-item" style="${hasActivated ? 'background: linear-gradient(135deg, #667eea22, #764ba222); border-color: #667eea;' : ''}">`;
+                    html += `<div class="facility-item" style="${hasActivated ? 'background: linear-gradient(135deg, #3b82f622, #1d4ed822); border-color: #3b82f6;' : ''}">`;
                     html += `<div class="facility-header">`;
                     html += `<span class="facility-name">${data.name} ${hasActivated ? '✓' : ''}</span>`;
                     html += `<span class="facility-level">消耗: ${data.cost}点</span>`;
@@ -9326,7 +9332,7 @@
             let html = '';
             
             // 顶部状态栏
-            html += `<div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 6px; color: white;">`;
+            html += `<div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 6px; color: white;">`;
             html += `<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">`;
             html += `<div style="font-size: 16px; font-weight: 600;">${exp.dungeon.name} - ${exp.path.name}</div>`;
             html += `<div style="font-size: 14px;">阶段 ${exp.currentStage}/${exp.maxStages}</div>`;
@@ -9357,9 +9363,9 @@
             html += `</div>`;
             
             // 探索点
-            html += `<div style="padding: 10px; background: #f8f9fa; border-radius: 4px; border-left: 3px solid #9b59b6;">`;
+            html += `<div style="padding: 10px; background: #f8f9fa; border-radius: 4px; border-left: 3px solid #3b82f6;">`;
             html += `<div style="font-size: 11px; color: #7f8c8d; margin-bottom: 3px;">探索点</div>`;
-            html += `<div style="font-size: 14px; font-weight: 600; color: #9b59b6;">${exp.explorationPoints}</div>`;
+            html += `<div style="font-size: 14px; font-weight: 600; color: #3b82f6;">${exp.explorationPoints}</div>`;
             html += `</div>`;
             html += `</div>`;
             
@@ -10039,8 +10045,6 @@
             renderAscensionContent();
             // 渲染仙界设施
             renderImmortalFacilities();
-            // 渲染轮回系统
-            renderReincarnationContent();
         }
         
         // 渲染飞升内容
@@ -10133,49 +10137,15 @@
             container.innerHTML = html;
         }
         
-        // 渲染轮回系统
-        function renderReincarnationContent() {
-            const container = document.getElementById('reincarnationContent');
-            if (!container) return;
-            
-            let html = '';
-            
-            html += `<div class="facility-item">`;
-            html += `<div class="facility-name">轮回重生 Reincarnation</div>`;
-            html += `<div class="facility-desc">轮回重修，获得永久加成</div>`;
-            html += `<div class="facility-benefit">`;
-            html += `• 重置修炼进度<br>`;
-            html += `• 保留部分成就和设施<br>`;
-            html += `• 获得轮回加成`;
-            html += `</div>`;
-            
-            if (gameData.reincarnations > 0) {
-                html += `<div style="margin-top: 8px; color: #9c27b0; font-weight: 600;">`;
-                html += `已轮回 ${gameData.reincarnations} 次`;
-                html += `</div>`;
-            }
-            
-            html += `<button class="btn" onclick="startReincarnation()" style="margin-top: 12px;" ${gameData.player.realm < 5 ? 'disabled' : ''}>`;
-            html += `开始轮回`;
-            html += `</button>`;
-            
-            if (gameData.player.realm < 5) {
-                html += `<div class="cost-info">需要达到炼虚期</div>`;
-            }
-            html += `</div>`;
-            
-            container.innerHTML = html;
-        }
-        
         // 渲染存档管理
         function renderSaveContent() {
             const container = document.getElementById('saveContent');
             let html = '';
             
             // 当前游戏信息
-            html += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 6px; margin-bottom: 20px;">`;
-            html += `<div style="font-size: 16px; font-weight: 600; margin-bottom: 10px;">当前游戏数据</div>`;
-            html += `<div style="font-size: 13px; opacity: 0.95; line-height: 1.8;">`;
+            html += `<div style="background: white; border: 1px solid #e0e0e0; padding: 15px; border-radius: 6px; margin-bottom: 15px;">`;
+            html += `<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #2c3e50;">📋 当前游戏数据</div>`;
+            html += `<div style="font-size: 12px; color: #7f8c8d; line-height: 1.6;">`;
             html += `境界: ${realms[gameData.player.realm].name} 第${gameData.player.realmLevel}层<br>`;
             html += `修炼天数: ${gameData.player.totalDays}天<br>`;
             html += `灵石: ${formatNumber(gameData.player.spiritStone)}<br>`;
@@ -11435,7 +11405,7 @@
                 easy: '#27ae60',
                 medium: '#f39c12',
                 hard: '#e74c3c',
-                extreme: '#8e44ad'
+                extreme: '#1d4ed8'
             };
             const difficultyNames = {
                 easy: '简单',
@@ -11475,7 +11445,7 @@
             html += `</div>`;
             html += `</div>`;
             
-            html += `<button class="btn btn-primary" id="startDungeonBattleBtn" onclick="executeDungeonBattle('${dungeonId}')" style="width: 100%; padding: 12px; font-size: 12px; font-weight: 500; background: #8e44ad; border: 1px solid #8e44ad; color: white; border-radius: 4px; transition: all 0.3s;">开始挑战</button>`;
+            html += `<button class="btn btn-primary" id="startDungeonBattleBtn" onclick="executeDungeonBattle('${dungeonId}')" style="width: 100%; padding: 12px; font-size: 12px; font-weight: 500; background: #1d4ed8; border: 1px solid #1d4ed8; color: white; border-radius: 4px; transition: all 0.3s;">开始挑战</button>`;
             
             battleCard.innerHTML = html;
             battleModal.appendChild(battleCard);

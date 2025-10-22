@@ -142,7 +142,7 @@ function showAchievementNotification(achievement) {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white;
         padding: 20px 30px;
         border-radius: 8px;
@@ -174,7 +174,7 @@ function showAchievementNotification(achievement) {
 
 // 显示突破效果
 function breakthroughEffect() {
-    const colors = ['#e74c3c', '#f39c12', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
+    const colors = ['#e74c3c', '#f39c12', '#f1c40f', '#2ecc71', '#3498db', '#3b82f6'];
     
     for (let i = 0; i < 20; i++) {
         setTimeout(() => {

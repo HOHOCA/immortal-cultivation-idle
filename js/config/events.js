@@ -559,7 +559,7 @@ const randomEvents = {
                 ]
             },
             
-            reincarnation_memory: {
+            past_life_memory: {
                 name: '<svg width="14" height="14" viewBox="0 0 24 24" fill="#f1c40f" style="vertical-align: -2px; margin-right: 4px;"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.63L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/></svg>前世记忆',
                 desc: '飞升后的你偶尔会回忆起前世的修炼经历...',
                 type: 'opportunity',

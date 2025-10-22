@@ -40,10 +40,10 @@ function renderRelationshipsPanel() {
     const sectGroups = {
         sword: { name: '剑宗（正派）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#3498db" style="vertical-align: -2px; margin-right: 6px;"><path d="M6.5,21L5,19.5L12,12.5L10.5,11L7,14.5L5.5,13L9,9.5L7.5,8L3,12.5L1.5,11L8,4.5L9.5,6L11,4.5L12.5,6L14,4.5L22,12.5L20.5,14L16,9.5L14.5,11L18,14.5L16.5,16L13,12.5L11.5,14L18.5,21H6.5Z"/></svg>', npcs: [] },
         alchemy: { name: '丹宗（正派）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#e74c3c" style="vertical-align: -2px; margin-right: 6px;"><path d="M7,2V3H9V7.59L3.05,13.54C2.37,14.22 2,15.1 2,16C2,17.86 3.5,19.36 5.36,19.36H18.64C20.5,19.36 22,17.86 22,16C22,15.1 21.63,14.22 20.95,13.54L15,7.59V3H17V2H7Z"/></svg>', npcs: [] },
-        formation: { name: '阵宗（正派）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#9b59b6" style="vertical-align: -2px; margin-right: 6px;"><path d="M12,2L22,8V16L12,22L2,16V8L12,2M12,4.15L4,9V15L12,19.85L20,15V9L12,4.15Z"/></svg>', npcs: [] },
+        formation: { name: '阵宗（正派）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#3b82f6" style="vertical-align: -2px; margin-right: 6px;"><path d="M12,2L22,8V16L12,22L2,16V8L12,2M12,4.15L4,9V15L12,19.85L20,15V9L12,4.15Z"/></svg>', npcs: [] },
         buddhist: { name: '佛宗（正派）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#f39c12" style="vertical-align: -2px; margin-right: 6px;"><path d="M12,2A3,3 0 0,1 15,5A3,3 0 0,1 12,8A3,3 0 0,1 9,5A3,3 0 0,1 12,2M12,9C16.42,9 20,10.79 20,13V15H4V13C4,10.79 7.58,9 12,9Z"/></svg>', npcs: [] },
         taoist: { name: '道宗（中立）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#16a085" style="vertical-align: -2px; margin-right: 6px;"><path d="M12,2A10,10 0 0,1 22,12A5,5 0 0,1 17,17C14.79,17 13,15.21 13,13A3,3 0 0,0 10,10C7.79,10 6,11.79 6,14A5,5 0 0,0 11,19A10,10 0 0,1 2,12A5,5 0 0,1 7,7C9.21,7 11,8.79 11,11A3,3 0 0,0 14,14C16.21,14 18,12.21 18,10A5,5 0 0,0 13,5A10,10 0 0,1 12,2Z"/></svg>', npcs: [] },
-        demon: { name: '魔宗（反派）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#8e44ad" style="vertical-align: -2px; margin-right: 6px;"><path d="M12,2C10,4 8,5 6,5C6,7 7,9 9,10C8,12 8,14 9,16C7,17 6,19 6,21C8,21 10,20 12,18C14,20 16,21 18,21C18,19 17,17 15,16C16,14 16,12 15,10C17,9 18,7 18,5C16,5 14,4 12,2Z"/></svg>', npcs: [] },
+        demon: { name: '魔宗（反派）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#1d4ed8" style="vertical-align: -2px; margin-right: 6px;"><path d="M12,2C10,4 8,5 6,5C6,7 7,9 9,10C8,12 8,14 9,16C7,17 6,19 6,21C8,21 10,20 12,18C14,20 16,21 18,21C18,19 17,17 15,16C16,14 16,12 15,10C17,9 18,7 18,5C16,5 14,4 12,2Z"/></svg>', npcs: [] },
         evil_cult: { name: '邪教（反派）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#2c3e50" style="vertical-align: -2px; margin-right: 6px;"><path d="M12,2L2,7V17L12,22L22,17V7L12,2M12,4.15L20,8.5V15.5L12,19.85L4,15.5V8.5L12,4.15M12,7A2,2 0 0,0 10,9A2,2 0 0,0 12,11A2,2 0 0,0 14,9A2,2 0 0,0 12,7Z"/></svg>', npcs: [] },
         blood_sect: { name: '血煞门（反派）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#c0392b" style="vertical-align: -2px; margin-right: 6px;"><path d="M12,2C12,2 6,9 6,13A6,6 0 0,0 12,19A6,6 0 0,0 18,13C18,9 12,2 12,2Z"/></svg>', npcs: [] },
         merchant: { name: '商会（中立）', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#d35400" style="vertical-align: -2px; margin-right: 6px;"><path d="M3,3H21V7H3V3M3,9H21V21H3V9M8,12V18H10V12H8M14,12V18H16V12H14Z"/></svg>', npcs: [] }
@@ -112,7 +112,17 @@ function renderNPCCard(npcId, npcConfig, npcData) {
         statusColor = '#f39c12';
     } else if (npcData?.hasAscended && npcData.isInImmortalWorld) {
         statusText = '在仙界';
-        statusColor = '#9b59b6';
+        statusColor = '#3b82f6';
+    }
+    
+    // 计算今日剩余互动次数
+    const today = new Date().toDateString();
+    const dailyLimit = 10;
+    let dailyRemaining = dailyLimit;
+    
+    if (npcData?.dailyInteractionDate === today) {
+        const count = npcData.dailyInteractionCount || 0;
+        dailyRemaining = Math.max(0, dailyLimit - count);
     }
     
     return `
@@ -132,9 +142,9 @@ function renderNPCCard(npcId, npcConfig, npcData) {
                                 正式师傅
                             </span>
                         ` : npcData?.isGuestMaster ? `
-                            <span style="display: inline-flex; align-items: center; background: linear-gradient(135deg, #9b59b6, #8e44ad); 
+                            <span style="display: inline-flex; align-items: center; background: linear-gradient(135deg, #3b82f6, #1d4ed8); 
                                          color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; 
-                                         margin-left: 8px; box-shadow: 0 2px 8px rgba(155,89,182,0.3);">
+                                         margin-left: 8px; box-shadow: 0 2px 8px rgba(59,130,246,0.3);">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="white" style="margin-right: 4px;">
                                     <path d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"/>
                                 </svg>
@@ -159,13 +169,16 @@ function renderNPCCard(npcId, npcConfig, npcData) {
                     ` : ''}
                 </div>
                 <div style="text-align: right;">
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
                                 color: white; padding: 8px 15px; border-radius: 20px; font-size: 14px; 
                                 font-weight: 600; margin-bottom: 8px;">
                         ${levelData.name}
                     </div>
                     <div style="font-size: 12px; color: #7f8c8d;">
                         好感度: ${relationship.favor}/100
+                    </div>
+                    <div style="font-size: 11px; color: ${dailyRemaining > 3 ? '#27ae60' : dailyRemaining > 0 ? '#f39c12' : '#e74c3c'}; margin-top: 4px;">
+                        今日互动: ${dailyRemaining}/${dailyLimit}
                     </div>
                 </div>
             </div>
@@ -177,7 +190,7 @@ function renderNPCCard(npcId, npcConfig, npcData) {
                     <span>${relationship.level < 5 ? `下一级: ${nextLevelData.name}` : '已达最高'}</span>
                 </div>
                 <div class="progress-bar" style="height: 12px;">
-                    <div class="progress-fill" style="width: ${progressPercent}%; background: linear-gradient(90deg, #667eea, #764ba2);">
+                    <div class="progress-fill" style="width: ${progressPercent}%; background: linear-gradient(90deg, #3b82f6, #1d4ed8);">
                     </div>
                 </div>
             </div>
@@ -238,6 +251,19 @@ function renderInteractionButton(npcId, interactionType, npcData) {
     const relationship = npcData?.relationship || { level: 1 };
     const canInteract = relationship.level >= (interaction.requirements?.minLevel || 1);
     
+    // 检查每日互动次数（不包括特殊事件）
+    let reachedDailyLimit = false;
+    if (!interaction.special && npcData) {
+        const today = new Date().toDateString();
+        const dailyLimit = 10;
+        
+        // 检查日期是否匹配
+        if (npcData.dailyInteractionDate === today) {
+            const count = npcData.dailyInteractionCount || 0;
+            reachedDailyLimit = count >= dailyLimit;
+        }
+    }
+    
     // 检查冷却
     const lastInteraction = npcData?.lastInteractions?.[interactionType] || 0;
     const cooldownRemaining = interaction.cooldown - (Date.now() - lastInteraction);
@@ -254,10 +280,12 @@ function renderInteractionButton(npcId, interactionType, npcData) {
         }
     }
     
-    const disabled = !canInteract || isOnCooldown || !hasResources;
+    const disabled = !canInteract || isOnCooldown || !hasResources || reachedDailyLimit;
     
     let buttonText = interaction.name;
-    if (isOnCooldown) {
+    if (reachedDailyLimit) {
+        buttonText += ' (今日已达上限)';
+    } else if (isOnCooldown) {
         const timeLeft = formatTime(Math.ceil(cooldownRemaining / 1000));
         buttonText += ` (${timeLeft})`;
     } else if (!canInteract) {
@@ -340,7 +368,7 @@ function showNPCDetails(npcId) {
         </div>
         
         <!-- 关系状态 -->
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
                     color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">关系状态</div>
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; font-size: 14px;">
