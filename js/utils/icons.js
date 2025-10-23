@@ -153,15 +153,15 @@ const SVGIcons = {
     `,
     
     // 星星
-    star: (size = 16, color = '#f1c40f') => `
-        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" style="vertical-align: middle; margin-right: 4px;">
+    star: (size = 16, color = 'currentColor') => `
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
             <path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.63L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/>
         </svg>
     `,
     
     // 剑
-    sword: (size = 16, color = '#3498db') => `
-        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" style="vertical-align: middle; margin-right: 4px;">
+    sword: (size = 16, color = 'currentColor') => `
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
             <path d="M6.5,21L5,19.5L12,12.5L10.5,11L7,14.5L5.5,13L9,9.5L7.5,8L3,12.5L1.5,11L8,4.5L9.5,6L11,4.5L12.5,6L14,4.5L22,12.5L20.5,14L16,9.5L14.5,11L18,14.5L16.5,16L13,12.5L11.5,14L18.5,21H6.5Z"/>
         </svg>
     `,
@@ -273,15 +273,15 @@ const SVGIcons = {
     `,
     
     // 多人/群组
-    people: (size = 16, color = '#95a5a6') => `
-        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" style="vertical-align: middle; margin-right: 4px;">
+    people: (size = 16, color = 'currentColor') => `
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
             <path d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z"/>
         </svg>
     `,
     
     // 建筑/门派
-    temple: (size = 16, color = '#2c3e50') => `
-        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" style="vertical-align: middle; margin-right: 4px;">
+    temple: (size = 16, color = 'currentColor') => `
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
             <path d="M3,10L12,3L21,10H18V20H6V10H3Z"/>
         </svg>
     `,
@@ -401,8 +401,8 @@ const SVGIcons = {
     `,
     
     // 用户群组
-    users: (size = 16, color = '#95a5a6') => `
-        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" style="vertical-align: middle; margin-right: 4px;">
+    users: (size = 16, color = 'currentColor') => `
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
             <path d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z"/>
         </svg>
     `

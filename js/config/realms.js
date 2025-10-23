@@ -4,63 +4,63 @@ const realms = [
             { 
                 name: '炼气期', 
                 maxLevel: 9, 
-                spiritRequired: 500, 
+                spiritRequired: 1000,  // ×2 前期调整
                 multiplier: 1,
                 story: '这是修仙的起点，感受天地灵气，引气入体...'
             },
             { 
                 name: '筑基期', 
                 maxLevel: 9, 
-                spiritRequired: 10000, 
+                spiritRequired: 20000,  // ×2 前期调整
                 multiplier: 2,
                 story: '灵气凝聚丹田，筑就道基。从此踏入真正的修仙之路，寿元大增。'
             },
             { 
                 name: '金丹期', 
                 maxLevel: 9, 
-                spiritRequired: 200000, 
+                spiritRequired: 800000,  // ×4 中期调整
                 multiplier: 4,
                 story: '丹田之气凝结成丹，金光闪烁。神识初显，可御器飞行，已非凡人可比。'
             },
             { 
                 name: '元婴期', 
                 maxLevel: 9, 
-                spiritRequired: 5000000, 
+                spiritRequired: 20000000,  // ×4 中期调整
                 multiplier: 8,
                 story: '金丹破碎，元婴诞生。元神凝实，神通显化，寿可千载。'
             },
             { 
                 name: '化神期', 
                 maxLevel: 9, 
-                spiritRequired: 150000000, 
+                spiritRequired: 600000000,  // ×4 中期调整
                 multiplier: 16,
                 story: '元婴化神，与天地感应更深。法则初显，神通莫测，已是一方强者。'
             },
             { 
                 name: '炼虚期', 
                 maxLevel: 9, 
-                spiritRequired: 5000000000, 
+                spiritRequired: 30000000000,  // ×6 后期调整
                 multiplier: 32,
                 story: '炼虚合道，返璞归真。虚空挪移，撕裂空间，修为通天。'
             },
             { 
                 name: '合体期', 
                 maxLevel: 9, 
-                spiritRequired: 200000000000, 
+                spiritRequired: 1200000000000,  // ×6 后期调整
                 multiplier: 64,
                 story: '天人合一，道法自然。举手投足间蕴含天地之力，已近仙道。'
             },
             { 
                 name: '大乘期', 
                 maxLevel: 9, 
-                spiritRequired: 10000000000000, 
+                spiritRequired: 60000000000000,  // ×6 后期调整
                 multiplier: 128,
                 story: '大道圆满，功德大成。只差一步，便可飞升成仙。'
             },
             { 
                 name: '渡劫期', 
                 maxLevel: 9, 
-                spiritRequired: 600000000000000, 
+                spiritRequired: 3600000000000000,  // ×6 后期调整
                 multiplier: 256,
                 story: '引天劫降临，以劫炼身。渡过此劫，便可飞升仙界！'
             }

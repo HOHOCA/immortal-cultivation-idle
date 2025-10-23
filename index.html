@@ -46,12 +46,103 @@
     
     <!-- 确保图标正确加载 -->
     <script>
-        // 页面加载完成后初始化图标
+        // 设备检测函数
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   window.innerWidth <= 768;
+        }
+        
+        function isTabletDevice() {
+            return window.innerWidth > 768 && window.innerWidth <= 1024;
+        }
+        
+        function getScreenSize() {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight,
+                isMobile: window.innerWidth <= 768,
+                isTablet: window.innerWidth > 768 && window.innerWidth <= 1024,
+                isDesktop: window.innerWidth > 1024
+            };
+        }
+        
+        // 应用响应式布局
+        function applyResponsiveLayout() {
+            const screenInfo = getScreenSize();
+            const body = document.body;
+            
+            // 清除之前的布局类
+            body.classList.remove('mobile-layout', 'tablet-layout', 'desktop-layout');
+            
+            if (screenInfo.isMobile) {
+                body.classList.add('mobile-layout');
+                // 手机端：显示底部导航，隐藏顶部标签
+                const bottomNav = document.getElementById('bottom-navigation');
+                const topTabs = document.querySelector('.tabs');
+                if (bottomNav) bottomNav.style.display = 'flex';
+                if (topTabs) topTabs.style.display = 'none';
+            } else if (screenInfo.isTablet) {
+                body.classList.add('tablet-layout');
+                // 平板端：两栏布局
+                const bottomNav = document.getElementById('bottom-navigation');
+                const topTabs = document.querySelector('.tabs');
+                if (bottomNav) bottomNav.style.display = 'none';
+                if (topTabs) topTabs.style.display = 'flex';
+            } else {
+                body.classList.add('desktop-layout');
+                // 桌面端：三栏布局
+                const bottomNav = document.getElementById('bottom-navigation');
+                const topTabs = document.querySelector('.tabs');
+                if (bottomNav) bottomNav.style.display = 'none';
+                if (topTabs) topTabs.style.display = 'flex';
+            }
+        }
+        
+        // 页面加载完成后初始化
         window.addEventListener('load', function() {
             if (typeof initIcons === 'function') {
                 initIcons();
             }
+            applyResponsiveLayout();
         });
+        
+        // 窗口大小改变时重新应用布局
+        window.addEventListener('resize', function() {
+            applyResponsiveLayout();
+        });
+        
+        // 更新switchTab函数以支持底部导航
+        function switchTab(tabName) {
+            // 隐藏所有标签页内容
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的标签页内容
+            const activeTab = document.getElementById(tabName + '-tab');
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+            
+            // 更新顶部标签页状态
+            const topTabs = document.querySelectorAll('.tab');
+            topTabs.forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.onclick && tab.onclick.toString().includes(tabName)) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // 更新底部导航状态
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-tab') === tabName) {
+                    item.classList.add('active');
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -83,22 +174,24 @@
                 </div>
 
                 <div id="playerStats">
-                    <!-- 核心属性（始终显示） -->
-                    <div class="stat-row">
-                        <span class="stat-label" title="主要：修炼、设施；次要：丹药、门派任务、事件">灵力</span>
-                        <span class="stat-value" id="spiritualPower">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label" title="主要：任务、交易；次要：副本、事件">灵石</span>
-                        <span class="stat-value" id="spiritStone">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label" title="主要：丹房产出、任务；次要：NPC奖励、事件">丹药</span>
-                        <span class="stat-value" id="pillCount">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">修炼天数</span>
-                        <span class="stat-value" id="totalDays">0</span>
+                    <!-- 核心属性（2x2网格紧凑显示） -->
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label" title="主要：修炼、设施；次要：丹药、门派任务、事件">灵力</span>
+                            <span class="stat-value" id="spiritualPower">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label" title="主要：任务、交易；次要：副本、事件">灵石</span>
+                            <span class="stat-value" id="spiritStone">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label" title="主要：丹房产出、任务；次要：NPC奖励、事件">丹药</span>
+                            <span class="stat-value" id="pillCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">修炼天数</span>
+                            <span class="stat-value" id="totalDays">0</span>
+                        </div>
                     </div>
                     
                     <!-- 次要属性（可折叠） -->
@@ -142,16 +235,18 @@
                     <span class="stat-value" id="elementName">-</span>
                 </div>
 
-                <div style="margin-top: 10px;">
-                    <button class="btn btn-primary" id="cultivateBtn" onclick="cultivate()">
-                        <span id="cultivateBtnText">修炼 (+0/s)</span>
-                    </button>
-                    <button class="btn" id="breakthroughBtn" onclick="attemptBreakthrough()" disabled>突破境界</button>
-                    <button class="btn" id="pillBtn" onclick="usePill()" disabled>使用丹药</button>
-                    <button class="btn" id="usePillBtn" onclick="usePill()" disabled style="display:none;">使用丹药</button>
-                    <button class="btn" id="autoModeBtn" onclick="toggleAutoMode()">
-                        <span id="autoModeText"></span>
-                    </button>
+                <div class="action-buttons">
+                    <div class="button-grid">
+                        <button class="btn btn-primary" id="cultivateBtn" onclick="cultivate()">
+                            <span id="cultivateBtnText">修炼 (+0/s)</span>
+                        </button>
+                        <button class="btn btn-primary" id="breakthroughBtn" onclick="attemptBreakthrough()" disabled>突破境界</button>
+                        <button class="btn" id="pillBtn" onclick="usePill()" disabled>使用丹药</button>
+                        <button class="btn" id="usePillBtn" onclick="usePill()" disabled style="display:none;">使用丹药</button>
+                        <button class="btn" id="autoModeBtn" onclick="toggleAutoMode()">
+                            <span id="autoModeText"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -292,6 +387,46 @@
             <!-- 日志展开按钮（折叠时显示） -->
             <button class="btn" id="logExpandBtn" onclick="toggleLogPanel()" style="display: none; position: fixed; right: 20px; bottom: 20px; padding: 10px; border-radius: 50%; width: 48px; height: 48px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000;" title="展开日志">
                 <span id="logExpandIcon"></span>
+            </button>
+        </div>
+        
+        <!-- 移动端底部导航栏 -->
+        <div id="bottom-navigation" class="bottom-navigation" style="display: none;">
+            <button class="nav-item active" onclick="switchTab('cultivation-system')" data-tab="cultivation-system">
+                <span class="nav-icon" id="nav-cultivation-icon"></span>
+                <span class="nav-label">修炼</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('resources')" data-tab="resources">
+                <span class="nav-icon" id="nav-resources-icon"></span>
+                <span class="nav-label">资源</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('power')" data-tab="power">
+                <span class="nav-icon" id="nav-power-icon"></span>
+                <span class="nav-label">战力</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('combat')" data-tab="combat">
+                <span class="nav-icon" id="nav-combat-icon"></span>
+                <span class="nav-label">战斗</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('sect')" data-tab="sect">
+                <span class="nav-icon" id="nav-sect-icon"></span>
+                <span class="nav-label">门派</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('relationships')" data-tab="relationships">
+                <span class="nav-icon" id="nav-relationships-icon"></span>
+                <span class="nav-label">人际</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('immortal')" data-tab="immortal">
+                <span class="nav-icon" id="nav-immortal-icon"></span>
+                <span class="nav-label">飞升</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('achievements')" data-tab="achievements">
+                <span class="nav-icon" id="nav-achievements-icon"></span>
+                <span class="nav-label">成就</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('save')" data-tab="save">
+                <span class="nav-icon" id="nav-save-icon"></span>
+                <span class="nav-label">存档</span>
             </button>
         </div>
     </div>

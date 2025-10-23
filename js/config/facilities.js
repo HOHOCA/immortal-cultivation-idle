@@ -6,7 +6,10 @@ const facilitiesData = {
                 desc: '提升灵力产出速度',
                 baseCost: 50,
                 costMultiplier: 1.45, // 降低成本增长
-                getBenefit: (level) => `每秒 +${level} 灵力`
+                getBenefit: (level) => {
+                    const production = FACILITY_CONFIG.VEIN_BASE_PRODUCTION + level * FACILITY_CONFIG.VEIN_PRODUCTION_GROWTH;
+                    return `每秒 +${production.toFixed(1)} 灵力`;
+                }
             },
             pillRoom: {
                 name: '丹房',

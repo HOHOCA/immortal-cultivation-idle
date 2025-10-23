@@ -272,7 +272,7 @@
                 getBenefit: (level) => `每分钟 +${level} 灵石`
             },
             immortalPond: {
-                name: '⭐ 仙池',
+                name: '⭐ 仙池`,
                 desc: '仙界灵泉，大幅提升灵力产出',
                 baseCost: 5000,
                 costMultiplier: 3,
@@ -280,7 +280,7 @@
                 getBenefit: (level) => `灵力产出 +${level * 50}%`
             },
             celestialTree: {
-                name: '⭐ 仙树',
+                name: '⭐ 仙树`,
                 desc: '天地灵根，每小时产出珍贵资源',
                 baseCost: 10000,
                 costMultiplier: 3.5,
@@ -715,7 +715,7 @@
                 duration: 480, // 8分钟
                 rewards: { contribution: 25, spiritualPower: 1500, breakthroughProgress: 8 },
                 cost: { spiritualPower: 400 },
-                warning: '⚠️ 修炼魔功会降低正派好感'
+                warning: `${getSvg('alert')} 修炼魔功会降低正派好感`
             },
             absorb_power: {
                 name: '吞噬灵力',
@@ -723,7 +723,7 @@
                 duration: 600, // 10分钟
                 rewards: { contribution: 30, spiritualPower: 2000, allBonus: 0.03 },
                 cost: { spiritualPower: 500 },
-                warning: '⚠️ 吞噬灵力会降低正派好感'
+                warning: `${getSvg('alert')} 吞噬灵力会降低正派好感`
             },
             conquest: {
                 name: '征服领地',
@@ -731,7 +731,7 @@
                 duration: 720, // 12分钟
                 rewards: { contribution: 35, spiritStone: 200, pills: 5 },
                 cost: { spiritualPower: 600 },
-                warning: '⚠️ 征服行为会激怒正派势力'
+                warning: `${getSvg('alert')} 征服行为会激怒正派势力`
             },
             
             // 邪教任务
@@ -741,7 +741,7 @@
                 duration: 540, // 9分钟
                 rewards: { contribution: 28, spiritualPower: 1400, spiritStone: 150 },
                 cost: { spiritualPower: 350 },
-                warning: '⚠️ 心术修炼会被正派敌视'
+                warning: `${getSvg('alert')} 心术修炼会被正派敌视`
             },
             conspiracy: {
                 name: '阴谋策划',
@@ -749,7 +749,7 @@
                 duration: 660, // 11分钟
                 rewards: { contribution: 32, spiritStone: 180, facilityBonus: 0.08 },
                 cost: { spiritStone: 100 },
-                warning: '⚠️ 阴谋行为会降低正派好感'
+                warning: `${getSvg('alert')} 阴谋行为会降低正派好感`
             },
             dark_ritual: {
                 name: '黑暗仪式',
@@ -757,7 +757,7 @@
                 duration: 780, // 13分钟
                 rewards: { contribution: 40, spiritualPower: 1800, allBonus: 0.04 },
                 cost: { spiritualPower: 500, spiritStone: 120 },
-                warning: '⚠️ 黑暗仪式会被所有正派追杀'
+                warning: `${getSvg('alert')} 黑暗仪式会被所有正派追杀`
             },
             
             // 血煞门任务
@@ -767,7 +767,7 @@
                 duration: 600, // 10分钟
                 rewards: { contribution: 35, spiritualPower: 2000, breakthroughProgress: 10 },
                 cost: { spiritualPower: 500 },
-                warning: '⚠️ 血煞修炼需要杀戮，会被正派追杀'
+                warning: `${getSvg('alert')} 血煞修炼需要杀戮，会被正派追杀`
             },
             slaughter: {
                 name: '杀戮试炼',
@@ -775,7 +775,7 @@
                 duration: 720, // 12分钟
                 rewards: { contribution: 45, spiritualPower: 2500, allBonus: 0.05 },
                 cost: { spiritualPower: 600 },
-                warning: '⚠️ 杀戮行为会激怒所有正派'
+                warning: `${getSvg('alert')} 杀戮行为会激怒所有正派`
             },
             blood_ritual: {
                 name: '血祭仪式',
@@ -783,7 +783,7 @@
                 duration: 900, // 15分钟
                 rewards: { contribution: 50, spiritStone: 300, pills: 8 },
                 cost: { spiritualPower: 700, spiritStone: 150 },
-                warning: '⚠️ 血祭仪式会被所有正派追杀'
+                warning: `${getSvg('alert')} 血祭仪式会被所有正派追杀`
             },
             
             // 商会任务
@@ -934,7 +934,7 @@
                 minRealm: 1,
                 choices: [
                     {
-                        text: '⚔️ 正面迎战（战斗）',
+                        text: `${getSvg('sword')} 正面迎战（战斗）`,
                         result: () => {
                             // 触发战斗事件
                             gameData.currentEvent = null; // 清除当前事件
@@ -1055,7 +1055,7 @@
                                 return `你在秘境中感悟良多，灵力增加 ${formatNumber(gain)}`;
                             } else {
                                 gameData.player.breakthroughProgress = 100;
-                                return '⚡ 你在秘境中得到传承，突破进度直接达到100%！';
+                                return `${getSvg('zap')} 你在秘境中得到传承，突破进度直接达到100%！`;
                             }
                         }
                     },
@@ -1126,7 +1126,7 @@
                 minRealm: 2,
                 choices: [
                     {
-                        text: '⚔️ 参与争夺（PvP战斗）',
+                        text: `${getSvg('sword')} 参与争夺（PvP战斗）`,
                         result: () => {
                             // 触发PvP战斗事件
                             gameData.currentEvent = null; // 清除当前事件
@@ -1142,7 +1142,7 @@
                             if (Math.random() < 0.4) {
                                 const gain = 500 + gameData.player.realm * 150;
                                 gameData.player.spiritStone += gain;
-                                return `⭐ 你成功夺得宝物，获得 ${gain} 块灵石！`;
+                                return `${getSvg('star')} 你成功夺得宝物，获得 ${gain} 块灵石！`;
                             } else {
                                 return '激烈争夺中你未能取胜，但平安离开';
                             }
@@ -1289,7 +1289,7 @@
                             if (availableArtifacts.length > 0) {
                                 const artifactId = availableArtifacts[Math.floor(Math.random() * availableArtifacts.length)];
                                 gameData.artifacts.push(artifactId);
-                                return `⚔️ 你成功炼化了 ${artifacts[artifactId].name}！`;
+                                return `${getSvg('sword')} 你成功炼化了 ${artifacts[artifactId].name}！`;
                             } else {
                                 gameData.player.spiritualPower += 1000;
                                 return '法宝与你无缘，但获得了1000灵力';
@@ -1307,7 +1307,7 @@
             
             // === 飞升专属事件 ===
             immortal_meeting: {
-                name: '🌟 仙人相会',
+                name: '⭐ 仙人相会`,
                 desc: '你遇到了一位真正的仙人，他来自仙界...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -1334,7 +1334,7 @@
             },
             
             celestial_fragment: {
-                name: '🌟 仙界碎片',
+                name: '⭐ 仙界碎片`,
                 desc: '仙界与凡界的空间裂缝出现，可以获取仙界资源...',
                 type: 'opportunity',
                 minRealm: 2,
@@ -1364,7 +1364,7 @@
             },
             
             past_life_memory: {
-                name: '🌟 前世记忆',
+                name: '⭐ 前世记忆`,
                 desc: '飞升后的你偶尔会回忆起前世的修炼经历...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -1434,7 +1434,7 @@
             
             // ==================== 仙界专属事件 ====================
             immortal_dao_comprehension: {
-                name: '🌟 仙道顿悟',
+                name: '⭐ 仙道顿悟`,
                 desc: '在仙界修炼，你突然领悟了仙道真谛...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -1463,7 +1463,7 @@
             },
             
             immortal_treasure: {
-                name: '🌟 仙界宝库',
+                name: '⭐ 仙界宝库`,
                 desc: '你发现了一座隐藏的仙界宝库...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -1501,7 +1501,7 @@
             },
             
             immortal_challenge: {
-                name: '🌟 仙人挑战',
+                name: '⭐ 仙人挑战`,
                 desc: '一位仙人向你发起挑战，这是证明自己的机会...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -1519,7 +1519,7 @@
                                 gameData.player.spiritStone += stoneGain;
                                 gameData.player.immortalStone = (gameData.player.immortalStone || 0) + immortalStoneGain;
                                 gameData.player.breakthroughProgress = Math.min(100, gameData.player.breakthroughProgress + 50);
-                                return `⚔️ 挑战成功！获得${stoneGain}灵石、${immortalStoneGain}仙石，突破进度+50%！`;
+                                return `${getSvg('sword')} 挑战成功！获得${stoneGain}灵石、${immortalStoneGain}仙石，突破进度+50%！`;
                             } else {
                                 return '挑战失败，但你获得了宝贵的经验...';
                             }
@@ -1538,7 +1538,7 @@
             
             // 五行相关事件
             element_trial: {
-                name: '🔥 五行试炼',
+                name: `${getSvg('fire')} 五行试炼`,
                 desc: '你遇到了五行试炼之地，可以提升属性强度...',
                 type: 'opportunity',
                 minRealm: 2,
@@ -2361,6 +2361,31 @@
             if (document.getElementById('settingsIcon')) {
                 document.getElementById('settingsIcon').innerHTML = getSvg('settings');
             }
+            
+            // 初始化底部导航图标
+            initNavigationIcons();
+        }
+
+        // 初始化底部导航图标
+        function initNavigationIcons() {
+            const iconMap = {
+                'nav-cultivation-icon': 'home',
+                'nav-resources-icon': 'beaker', 
+                'nav-power-icon': 'target',  // 战力用靶心图标
+                'nav-combat-icon': 'sword',  // 战斗用剑图标
+                'nav-sect-icon': 'temple',
+                'nav-relationships-icon': 'people',
+                'nav-immortal-icon': 'star',
+                'nav-achievements-icon': 'trophy',
+                'nav-save-icon': 'save'
+            };
+            
+            for (let [id, iconName] of Object.entries(iconMap)) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.innerHTML = getSvg(iconName);
+                }
+            }
         }
 
         // 显示通知
@@ -2749,7 +2774,9 @@
 
         // 计算每秒灵力
         function calculateSpiritPerSecond() {
-            let base = gameData.facilities.spiritualVein;
+            // 使用配置常量计算灵脉产出（基础产出 + 等级 × 每级增长）
+            const veinLevel = gameData.facilities.spiritualVein || 0;
+            let base = FACILITY_CONFIG.VEIN_BASE_PRODUCTION + veinLevel * FACILITY_CONFIG.VEIN_PRODUCTION_GROWTH;
             
             // 藏经阁加成
             if (gameData.facilities.library > 0) {
@@ -3159,8 +3186,9 @@
             if (gameData.player.pills > 0) {
                 gameData.player.pills--;
                 gameData.player.totalPillsUsed++;
-                gameData.player.spiritualPower += 100;
-                addLog('使用丹药，获得 100 点灵力');
+                const pillPower = CULTIVATION_CONFIG.PILL_POWER;
+                gameData.player.spiritualPower += pillPower;
+                addLog(`使用丹药，获得 ${pillPower} 点灵力`);
                 updateUI();
             }
         }
@@ -4409,21 +4437,21 @@
             const categories = {
                 basic: {
                     name: '基础设施',
-                    icon: '🏠',
+                    icon: getSvg('home'),
                     svgIcon: 'home',
                     facilities: ['spiritualVein', 'pillRoom', 'library'],
                     defaultCollapsed: false
                 },
                 advanced: {
                     name: '高级设施',
-                    icon: '⚡',
+                    icon: getSvg('bolt'),
                     svgIcon: 'bolt',
                     facilities: ['artifactRoom', 'spiritualField'],
                     defaultCollapsed: false
                 },
                 immortal: {
                     name: '仙界设施',
-                    icon: '⭐',
+                    icon: getSvg('star'),
                     svgIcon: 'star',
                     facilities: ['immortalPond', 'celestialTree'],
                     defaultCollapsed: false
@@ -4458,7 +4486,7 @@
                         if (facility.requiredAscension && gameData.ascensionCount < facility.requiredAscension && level === 0) {
                             html += `<div class="facility-item" style="opacity: 0.5;">`;
                             html += `<div class="facility-header">`;
-                            html += `<span class="facility-name">🔒 ${facility.name}</span>`;
+                            html += `<span class="facility-name">${getSvg('lock')} ${facility.name}</span>`;
                             html += `<span class="facility-level">未解锁</span>`;
                             html += `</div>`;
                             html += `<div class="facility-desc">${facility.desc}</div>`;
@@ -4789,7 +4817,7 @@
                         // 未解锁的功法
                         html += `<div class="facility-item" style="opacity: 0.5;">`;
                         html += `<div class="facility-header">`;
-                        html += `<span class="facility-name">🔒 ${technique.name}</span>`;
+                        html += `<span class="facility-name">${getSvg('lock')} ${technique.name}</span>`;
                         html += `<span class="facility-level">未解锁</span>`;
                         html += `</div>`;
                         html += `<div class="facility-desc">${technique.desc}</div>`;
@@ -4907,9 +4935,9 @@
             html += `<div style="font-size: 14px; font-weight: 600; color: #2c3e50; margin-bottom: 12px;">当前装备</div>`;
             
             const slots = {
-                weapon: { name: '武器槽', icon: '⚔️' },
-                armor: { name: '防具槽', icon: '🛡️' },
-                accessory: { name: '饰品槽', icon: '💍' }
+                weapon: { name: '武器槽', icon: getSvg('sword') },
+                armor: { name: '防具槽', icon: getSvg('shield') },
+                accessory: { name: '饰品槽', icon: getSvg('diamond') }
             };
             
             html += `<div class="equipment-slots">`;
@@ -4968,7 +4996,7 @@
                     html += `<div class="facility-item" style="${isEquipped ? 'opacity: 0.5;' : ''}">`;
                     html += `<div class="facility-header">`;
                     html += `<span class="facility-name">${artifact.name}</span>`;
-                    html += `<span class="facility-level">${isEquipped ? '已装备' : artifact.type === 'weapon' ? '⚔️' : artifact.type === 'armor' ? '🛡️' : '💍'}</span>`;
+                    html += `<span class="facility-level">${isEquipped ? '已装备' : artifact.type === 'weapon' ? getSvg('sword') : artifact.type === 'armor' ? getSvg('shield') : getSvg('diamond')}</span>`;
                     html += `</div>`;
                     html += `<div class="facility-desc">${artifact.desc}</div>`;
                     html += `<div class="facility-benefit">`;
@@ -5020,7 +5048,7 @@
                         
                         html += `<div class="facility-item" style="background: #fff8e1; border-color: ${rarityColors[pet.rarity]};">`;
                         html += `<div class="facility-header">`;
-                        html += `<span class="facility-name">✨ ${pet.name} (激活中)</span>`;
+                        html += `<span class="facility-name">${getSvg('sparkles')} ${pet.name} (激活中)</span>`;
                         html += `<span class="facility-level" style="background: ${rarityColors[pet.rarity]};">${pet.rarity}</span>`;
                         html += `</div>`;
                         html += `<div class="facility-desc">${pet.desc}</div>`;
@@ -5379,7 +5407,7 @@
             
             // 装备新法宝
             gameData.equipment[artifact.type] = artifactId;
-            addLog(`<span class="log-success">⚔️ 装备了 ${artifact.name}</span>`);
+            addLog(`<span class="log-success">${getSvg('sword')} 装备了 ${artifact.name}</span>`);
             
             renderEquipment();
             updateUI();
@@ -5759,7 +5787,7 @@
                 if (!isUnlocked) {
                     html += `<div class="facility-item" style="opacity: 0.5;">`;
                     html += `<div class="facility-header">`;
-                    html += `<span class="facility-name">🔒 ${recipe.name}</span>`;
+                    html += `<span class="facility-name">${getSvg('lock')} ${recipe.name}</span>`;
                     html += `<span class="facility-level">未解锁</span>`;
                     html += `</div>`;
                     html += `<div class="facility-desc">${recipe.desc}</div>`;
@@ -7186,7 +7214,7 @@
             
             // 成就加成总览
             html += `<div style="background: white; border: 1px solid #e0e0e0; padding: 15px; border-radius: 6px; margin-bottom: 15px;">`;
-            html += `<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #2c3e50;">✨ 成就永久加成总览</div>`;
+            html += `<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #2c3e50;">${getSvg('sparkles')} 成就永久加成总览</div>`;
             html += `<div style="font-size: 12px; color: #7f8c8d;">`;
             const totalBonuses = Object.keys(gameData.achievementBonuses).filter(k => gameData.achievementBonuses[k] > 0).length;
             if (totalBonuses === 0) {
@@ -7302,7 +7330,12 @@
                     
                     html += `<div class="facility-item" style="${bgStyle}">`;
                     html += `<div class="facility-header">`;
-                    html += `<span class="facility-name">${achievement.isCompleted ? '✓ ' : achievement.hidden ? '⭐ ' : ''}${achievement.name}</span>`;
+                    // 动态替换成就名称中的emoji为SVG
+                    let displayName = achievement.name;
+                    displayName = displayName.replace(/⭐/g, getSvg('star'));
+                    displayName = displayName.replace(/✓/g, getSvg('check'));
+                    
+                    html += `<span class="facility-name">${achievement.isCompleted ? getSvg('check') + ' ' : achievement.hidden ? getSvg('star') + ' ' : ''}${displayName}</span>`;
                     if (achievement.isCompleted) {
                         html += `<span class="facility-level" style="background: #27ae60;">已完成</span>`;
                     } else if (achievement.canComplete) {
@@ -7322,7 +7355,7 @@
                     // 显示奖励
                     if (!isHidden || achievement.canComplete || achievement.isCompleted) {
                         html += `<div class="facility-benefit" style="margin-top: 8px;">`;
-                        html += `🎁 奖励: `;
+                        html += `${getSvg('gift')} 奖励: `;
                         if (achievement.reward.spiritStone) html += `${formatNumber(achievement.reward.spiritStone)}灵石 `;
                         if (achievement.reward.pills) html += `${achievement.reward.pills}丹药 `;
                         if (achievement.reward.immortalStone) html += `${achievement.reward.immortalStone}仙石 `;
@@ -7332,7 +7365,7 @@
                         // 显示永久加成
                         if (achievement.bonus) {
                             html += `<div style="font-size: 11px; color: #3b82f6; margin-top: 5px; font-weight: 600;">`;
-                            html += `✨ 永久加成: `;
+                            html += `${getSvg('sparkles')} 永久加成: `;
                             if (achievement.bonus.spiritualPowerBonus) html += `灵力+${(achievement.bonus.spiritualPowerBonus * 100).toFixed(0)}% `;
                             if (achievement.bonus.spiritStoneBonus) html += `灵石+${(achievement.bonus.spiritStoneBonus * 100).toFixed(0)}% `;
                             if (achievement.bonus.breakthroughBonus) html += `突破率+${(achievement.bonus.breakthroughBonus * 100).toFixed(0)}% `;
@@ -7415,7 +7448,7 @@
                 const achievement = achievementsData[id];
                 if (!gameData.achievements.includes(id) && achievement.check()) {
                     // 不自动领取，只提示
-                    addLog(`💡 新成就可领取：${achievement.name}`);
+                    addLog(`${getSvg('info')} 新成就可领取：${achievement.name}`);
                 }
             }
             renderAchievements();
@@ -8031,7 +8064,7 @@
                 gameData.player.pills += pillGain;
                 gameData.player.combatWins = (gameData.player.combatWins || 0) + 1;
                 reward = `获得奖励：${stoneGain} 灵石，${pillGain} 枚丹药`;
-                addLog(`⚔️ 击败魔修，获得 ${stoneGain} 灵石和 ${pillGain} 枚丹药`);
+                addLog(`${getSvg('sword')} 击败魔修，获得 ${stoneGain} 灵石和 ${pillGain} 枚丹药`);
             } else if (result === 'lose') {
                 resultText = '你被魔修击败了...';
                 const loss = Math.floor(gameData.player.spiritualPower * 0.3);
@@ -8077,7 +8110,7 @@
                 gameData.player.pills += pillGain;
                 gameData.player.combatWins = (gameData.player.combatWins || 0) + 1;
                 reward = `获得宝物奖励：${stoneGain} 灵石，${pillGain} 枚丹药`;
-                addLog(`💎 夺得宝物，获得 ${stoneGain} 灵石和 ${pillGain} 枚丹药`);
+                addLog(`${getSvg('diamond')} 夺得宝物，获得 ${stoneGain} 灵石和 ${pillGain} 枚丹药`);
             } else if (result === 'lose') {
                 resultText = '你未能夺得宝物...';
                 const loss = Math.floor(gameData.player.spiritualPower * 0.2);
@@ -8307,7 +8340,7 @@
                             style="flex: 1; background: #3b82f6; color: white; font-weight: 600; padding: 12px; border: none;">
                         飞升仙界
                     </button>
-                    <button class="btn" onclick="this.parentElement.parentElement.parentElement.remove()" 
+                    <button class="btn" onclick="closeAscensionModal()" 
                             style="flex: 1; background: #f0f0f0; color: #666; padding: 12px; border: 1px solid #ddd;">
                         继续修炼
                     </button>
@@ -8316,6 +8349,24 @@
             
             modal.appendChild(card);
             document.body.appendChild(modal);
+        }
+
+        // 开始飞升流程（显示飞升弹窗）
+        function ascendToImmortalWorld() {
+            // 检查是否达到飞升条件
+            if (gameData.player.realm !== 8 || gameData.player.realmLevel !== 9) {
+                showNotification('需要达到渡劫期第9层才能飞升', 'warning');
+                return;
+            }
+            
+            // 显示飞升弹窗
+            showAscensionOption();
+        }
+
+        // 关闭飞升弹窗
+        function closeAscensionModal() {
+            // 关闭所有z-index为2000的弹窗
+            document.querySelectorAll('[style*="z-index: 2000"]').forEach(el => el.remove());
         }
 
         // 进入仙界（不重置）
@@ -8337,7 +8388,7 @@
             gameData.player.immortalRealmLevel = 1;
             
             addLog(`<span class="log-important">${getSvg('zap')}${getSvg('zap')}${getSvg('zap')} 成功飞升，进入仙界！开始地仙修炼之路...</span>`);
-            showNotification('🌟 欢迎来到仙界！', 'success');
+            showNotification(`${getSvg('star')} 欢迎来到仙界！`, 'success');
             breakthroughEffect();
             
             // 显示仙界介绍
@@ -8345,6 +8396,17 @@
                 showRealmStory(immortalRealms[0]);
             }, 1000);
             
+            // 渲染并切换到仙界标签，避免界面遗留或文本化SVG
+            if (typeof renderAscensionContent === 'function') {
+                renderAscensionContent();
+            }
+            if (typeof renderImmortalFacilities === 'function') {
+                renderImmortalFacilities();
+            }
+            if (typeof switchTab === 'function') {
+                switchTab('immortal');
+            }
+
             updateUI();
             renderCultivation();
             saveGame();
@@ -8375,7 +8437,16 @@
                 totalDays: 0,
                 breakthroughProgress: 0,
                 totalPillsUsed: 0,
-                totalBreakthroughs: 0
+                totalBreakthroughs: 0,
+                // 战斗相关字段初始化，避免后续访问undefined
+                combatPower: 0,
+                combatWins: 0,
+                combatLosses: 0,
+                bossesDefeated: [],
+                // 仙界标记复位
+                isInImmortalWorld: false,
+                immortalRealm: 0,
+                immortalRealmLevel: 1
             };
             
             // 重置设施但保留1级灵脉和飞升设施
@@ -8436,13 +8507,13 @@
             
             // 提示新解锁内容
             if (gameData.ascensionCount === 1) {
-                addLog(`<span class="log-success">✨ 解锁：仙基心法、仙池设施、仙界专属事件</span>`);
+                addLog(`<span class="log-success">${getSvg('sparkles')} 解锁：仙基心法、仙池设施、仙界专属事件</span>`);
             } else if (gameData.ascensionCount === 2) {
-                addLog(`<span class="log-success">✨ 解锁：仙树设施</span>`);
+                addLog(`<span class="log-success">${getSvg('sparkles')} 解锁：仙树设施</span>`);
             } else if (gameData.ascensionCount === 3) {
-                addLog(`<span class="log-success">✨ 解锁：仙元功</span>`);
+                addLog(`<span class="log-success">${getSvg('sparkles')} 解锁：仙元功</span>`);
             } else if (gameData.ascensionCount === 5) {
-                addLog(`<span class="log-success">✨ 解锁：永恒大道（终极功法）</span>`);
+                addLog(`<span class="log-success">${getSvg('sparkles')} 解锁：永恒大道（终极功法）</span>`);
             }
             
             saveGame();
@@ -8451,6 +8522,10 @@
             renderCultivation();
             renderAlchemy();
             renderSectContent();
+            // 确保飞升后仙界设施面板正确刷新显示
+            if (typeof renderImmortalFacilities === 'function') {
+                renderImmortalFacilities();
+            }
         }
 
         // 确认更换门派
@@ -8569,8 +8644,49 @@
             return element;
         }
         
+        // 数据修复函数 - 确保所有必要字段存在
+        function fixPlayerData() {
+            const player = gameData.player;
+            
+            // 修复战斗相关字段
+            if (!Array.isArray(player.bossesDefeated)) {
+                player.bossesDefeated = [];
+            }
+            if (typeof player.combatPower !== 'number') {
+                player.combatPower = 0;
+            }
+            if (typeof player.combatWins !== 'number') {
+                player.combatWins = 0;
+            }
+            if (typeof player.combatLosses !== 'number') {
+                player.combatLosses = 0;
+            }
+            
+            // 修复仙界相关字段
+            if (typeof player.isInImmortalWorld !== 'boolean') {
+                player.isInImmortalWorld = false;
+            }
+            if (typeof player.immortalRealm !== 'number') {
+                player.immortalRealm = 0;
+            }
+            if (typeof player.immortalRealmLevel !== 'number') {
+                player.immortalRealmLevel = 1;
+            }
+            
+            // 修复其他可能缺失的字段
+            if (typeof player.elementPower !== 'number') {
+                player.elementPower = 0;
+            }
+            if (!player.element) {
+                player.element = 'none';
+            }
+        }
+
         // 更新UI
         function updateUI() {
+            // 先修复数据
+            fixPlayerData();
+            
             const player = gameData.player;
             let realm, realmName, realmLevel;
             
@@ -8585,8 +8701,15 @@
                 realmLevel = `第${player.realmLevel}层`;
             }
             
-            // 更新境界显示
-            document.getElementById('realmName').textContent = realmName;
+            // 更新境界显示（仙界时包含SVG，需用innerHTML）
+            const realmNameEl = document.getElementById('realmName');
+            if (realmNameEl) {
+                if (player.isInImmortalWorld) {
+                    realmNameEl.innerHTML = realmName;
+                } else {
+                    realmNameEl.textContent = realmName;
+                }
+            }
             document.getElementById('realmLevel').textContent = realmLevel;
             
             // 所有系统统一使用多列网格布局
@@ -8714,7 +8837,7 @@
             
             // 战斗属性显示
             html += `<div style="margin-bottom: 25px;">`;
-            html += `<h3 style="font-size: 16px; margin-bottom: 15px;">⚔️ 战斗属性</h3>`;
+            html += `<h3 style="font-size: 16px; margin-bottom: 15px;">${getSvg('sword')} 战斗属性</h3>`;
             html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">`;
             
             const combatPower = calculateCombatPower();
@@ -8770,7 +8893,7 @@
             
             // Boss战斗区域
             html += `<div style="margin-bottom: 25px;">`;
-            html += `<h3 style="font-size: 16px; margin-bottom: 15px;">⚔️ Boss挑战</h3>`;
+            html += `<h3 style="font-size: 16px; margin-bottom: 15px;">${getSvg('sword')} Boss挑战</h3>`;
             html += `<p style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">挑战强大的Boss获取丰厚奖励</p>`;
             
             // 添加网格布局容器
@@ -8810,7 +8933,7 @@
             
             // 副本区域
             html += `<div style="margin-bottom: 25px;">`;
-            html += `<h3 style="font-size: 16px; margin-bottom: 15px;">🏔️ 副本探索</h3>`;
+            html += `<h3 style="font-size: 16px; margin-bottom: 15px;">${getSvg('mountain')} 副本探索</h3>`;
             html += `<p style="font-size: 12px; color: #7f8c8d; margin-bottom: 15px;">探索副本，体验不同的冒险路径和事件</p>`;
             
             // 添加网格布局容器
@@ -8832,7 +8955,7 @@
                 // 显示特色机制
                 if (dungeon.specialMechanic) {
                     html += `<div style="font-size: 11px; color: #3b82f6; margin: 5px 0;">`;
-                    html += `✨ ${dungeon.specialMechanic.name}: ${dungeon.specialMechanic.desc}`;
+                    html += `${getSvg('sparkles')} ${dungeon.specialMechanic.name}: ${dungeon.specialMechanic.desc}`;
                     html += `</div>`;
                 }
                 
@@ -9152,7 +9275,7 @@
             
             battleCard.innerHTML = `
                 <div style="font-size: 24px; font-weight: 600; color: #2c3e50; margin-bottom: 20px;">
-                    ⚔️ 战斗开始！
+                    ${getSvg('sword')} 战斗开始！
                 </div>
                 <div style="font-size: 18px; color: #e74c3c; margin-bottom: 15px;">
                     vs ${boss.name}
@@ -9303,7 +9426,7 @@
             };
             
             showNotification(`进入${dungeon.name} - ${path.name}`, 'info');
-            addLog(`🏔️ 开始探索 ${dungeon.name}（${path.name}）`);
+            addLog(`${getSvg('mountain')} 开始探索 ${dungeon.name}（${path.name}）`);
             
             // 显示探索界面
             showDungeonExplorationUI();
@@ -9466,7 +9589,7 @@
             let html = '';
             
             html += `<div style="padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 6px; color: white; margin-bottom: 15px;">`;
-            html += `<h3 style="margin: 0 0 10px 0; font-size: 18px;">✨ ${event.name}</h3>`;
+            html += `<h3 style="margin: 0 0 10px 0; font-size: 18px;">${getSvg('sparkles')} ${event.name}</h3>`;
             html += `<p style="margin: 0; font-size: 13px; opacity: 0.95;">${event.desc}</p>`;
             html += `</div>`;
             
@@ -9674,7 +9797,7 @@
             let html = '';
             
             html += `<div style="padding: 20px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border-radius: 6px; color: white; margin-bottom: 15px; text-align: center;">`;
-            html += `<h3 style="margin: 0 0 10px 0; font-size: 20px;">⚔️ 遭遇战斗</h3>`;
+            html += `<h3 style="margin: 0 0 10px 0; font-size: 20px;">${getSvg('sword')} 遭遇战斗</h3>`;
             html += `<p style="margin: 0; font-size: 16px; font-weight: 600;">${enemy.name}</p>`;
             html += `</div>`;
             
@@ -9705,7 +9828,7 @@
                 
                 if (success) {
                     showNotification(`击败了${enemy.name}！`, 'success');
-                    addLog(`⚔️ 击败了${enemy.name}`);
+                    addLog(`${getSvg('sword')} 击败了${enemy.name}`);
                     
                     // 驯服机制
                     if (enemy.canTame && Math.random() < enemy.tameChance) {
@@ -9891,7 +10014,7 @@
             gameData.talentPoints -= talent.cost;
             gameData.talents.push(talentId);
             
-            addLog(`<span class="log-success">✨ 激活天赋：${talent.name}</span>`);
+            addLog(`<span class="log-success">${getSvg('sparkles')} 激活天赋：${talent.name}</span>`);
             showNotification(`激活天赋：${talent.name}`, 'success');
             breakthroughEffect();
             
@@ -9994,7 +10117,7 @@
                 html += `产出速率：每分钟 +${productionPerMin} 灵石`;
                 html += `</div>`;
                 html += `<div style="font-size: 12px; color: #7f8c8d; margin-top: 8px;">`;
-                html += `💡 提示：前往"修炼系统"标签升级灵田以提升产出`;
+                html += `${getSvg('info')} 提示：前往"修炼系统"标签升级灵田以提升产出`;
                 html += `</div>`;
                 html += `</div>`;
             }
@@ -10073,7 +10196,7 @@
             } else {
                 if (canAscend) {
                     html += `<button class="btn" onclick="ascendToImmortalWorld()" style="margin-top: 12px; background: gold; color: #333; font-weight: 600;">`;
-                    html += `✨ 开始飞升`;
+                    html += `${getSvg('sparkles')} 开始飞升`;
                     html += `</button>`;
                 } else {
                     html += `<div class="cost-info" style="color: white; opacity: 0.8;">`;
@@ -10103,7 +10226,7 @@
             
             if (!gameData.player.isInImmortalWorld && gameData.ascensionCount === 0) {
                 html += `<div class="facility-item" style="opacity: 0.6;">`;
-                html += `<div class="facility-name">🔒 未解锁</div>`;
+                html += `<div class="facility-name">${getSvg('lock')} 未解锁</div>`;
                 html += `<div class="facility-desc">飞升后解锁仙界专属设施</div>`;
                 html += `</div>`;
             } else {
@@ -10111,12 +10234,12 @@
                 const pondLevel = gameData.facilities.immortalPond || 0;
                 html += `<div class="facility-item">`;
                 html += `<div class="facility-header">`;
-                html += `<span class="facility-name">⭐ 仙池 Lv.${pondLevel}</span>`;
+                html += `<span class="facility-name">${getSvg('star')} 仙池 Lv.${pondLevel}</span>`;
                 html += `</div>`;
                 html += `<div class="facility-desc">仙界灵泉，大幅提升灵力产出</div>`;
                 html += `<div class="facility-benefit">灵力产出 +${pondLevel * 50}%</div>`;
                 html += `<div style="font-size: 12px; color: #7f8c8d; margin-top: 8px;">`;
-                html += `💡 前往"修炼系统"标签升级设施`;
+                html += `${getSvg('info')} 前往"修炼系统"标签升级设施`;
                 html += `</div>`;
                 html += `</div>`;
                 
@@ -10124,12 +10247,12 @@
                 const treeLevel = gameData.facilities.celestialTree || 0;
                 html += `<div class="facility-item">`;
                 html += `<div class="facility-header">`;
-                html += `<span class="facility-name">⭐ 仙树 Lv.${treeLevel}</span>`;
+                html += `<span class="facility-name">${getSvg('star')} 仙树 Lv.${treeLevel}</span>`;
                 html += `</div>`;
                 html += `<div class="facility-desc">天地灵根，每小时产出珍贵资源</div>`;
                 html += `<div class="facility-benefit">每小时 +${treeLevel * 10}灵石, +${treeLevel}丹药</div>`;
                 html += `<div style="font-size: 12px; color: #7f8c8d; margin-top: 8px;">`;
-                html += `💡 前往"修炼系统"标签升级设施`;
+                html += `${getSvg('info')} 前往"修炼系统"标签升级设施`;
                 html += `</div>`;
                 html += `</div>`;
             }
@@ -10144,7 +10267,7 @@
             
             // 当前游戏信息
             html += `<div style="background: white; border: 1px solid #e0e0e0; padding: 15px; border-radius: 6px; margin-bottom: 15px;">`;
-            html += `<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #2c3e50;">📋 当前游戏数据</div>`;
+            html += `<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #2c3e50;">${getSvg('clipboard')} 当前游戏数据</div>`;
             html += `<div style="font-size: 12px; color: #7f8c8d; line-height: 1.6;">`;
             html += `境界: ${realms[gameData.player.realm].name} 第${gameData.player.realmLevel}层<br>`;
             html += `修炼天数: ${gameData.player.totalDays}天<br>`;
@@ -10543,7 +10666,7 @@
             gameData.statistics.exports++;
             
             showNotification('存档已导出到文件', 'success');
-            addLog('<span class="log-success">💾 存档已成功导出</span>');
+            addLog(`<span class="log-success">${getSvg('save')} 存档已成功导出</span>`);
             checkAchievements(); // 检查成就
         }
 
@@ -10589,7 +10712,7 @@
             URL.revokeObjectURL(url);
             
             showNotification('所有存档已导出到文件', 'success');
-            addLog('<span class="log-success">💾 所有存档已成功导出</span>');
+            addLog(`<span class="log-success">${getSvg('save')} 所有存档已成功导出</span>`);
         }
 
         // 从文件导入存档
@@ -11325,7 +11448,7 @@
                     reward += `，${combatEquipment[boss.rewards.equipment].name}`;
                 }
                 
-                addLog(`👑 击败${boss.name}，获得 ${boss.rewards.spiritStone} 灵石和 ${boss.rewards.pills} 枚丹药`);
+                addLog(`${getSvg('crown')} 击败${boss.name}，获得 ${boss.rewards.spiritStone} 灵石和 ${boss.rewards.pills} 枚丹药`);
             } else if (result === 'lose') {
                 resultText = `你被${boss.name}击败了...`;
                 const loss = Math.floor(gameData.player.spiritualPower * 0.4);
@@ -11584,7 +11707,7 @@
                     reward += `<br>战斗奖励：${totalReward.spiritStone} 灵石，${totalReward.pills} 枚丹药`;
                 }
                 
-                addLog(`🏰 完成副本${dungeon.name}，获得 ${dungeon.finalReward.spiritStone} 灵石和 ${dungeon.finalReward.pills} 枚丹药`);
+                addLog(`${getSvg('castle')} 完成副本${dungeon.name}，获得 ${dungeon.finalReward.spiritStone} 灵石和 ${dungeon.finalReward.pills} 枚丹药`);
             } else {
                 resultText = `你在${dungeon.name}中失败了...`;
                 const loss = Math.floor(gameData.player.spiritualPower * 0.3);

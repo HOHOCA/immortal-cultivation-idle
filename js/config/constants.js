@@ -19,7 +19,7 @@ const GAME_CONFIG = {
 // ========== 修炼系统 ==========
 const CULTIVATION_CONFIG = {
     BASE_GAIN: 10,                          // 基础修炼获得灵力
-    PILL_POWER: 100,                        // 每颗丹药提供的灵力
+    PILL_POWER: 50,                         // 每颗丹药提供的灵力（降低50%以平衡游戏节奏）
     PILL_BREAKTHROUGH_BONUS: 10,            // 丹药提升突破进度（%）
 };
 
@@ -36,7 +36,7 @@ const FACILITY_CONFIG = {
     VEIN_BASE_COST: 50,                     // 灵脉基础升级成本
     VEIN_COST_MULTIPLIER: 1.5,              // 成本倍率
     VEIN_BASE_PRODUCTION: 1,                // 基础产出/秒
-    VEIN_PRODUCTION_GROWTH: 0.5,            // 每级增长
+    VEIN_PRODUCTION_GROWTH: 0.3,            // 每级增长（降低40%以平衡游戏节奏）
     
     // 丹房
     PILL_ROOM_BASE_COST: 500,
