@@ -10,13 +10,14 @@
     <link rel="stylesheet" href="css/dark-mode.css">
     
     <!-- 配置数据模块 -->
+    <script src="js/utils/icons.js?v=3.1"></script>
     <script src="js/config/constants.js?v=3.1"></script>
     <script src="js/config/realms.js?v=3.0"></script>
     <script src="js/config/facilities.js?v=3.0"></script>
     <script src="js/config/sects.js?v=3.0"></script>
     <script src="js/config/division-tasks.js?v=3.0"></script>
     <script src="js/config/events.js?v=3.0"></script>
-    <script src="js/config/combat-data.js?v=3.0"></script>
+    <script src="js/config/storylines.js?v=3.0"></script>
     <script src="js/config/npcs.js?v=3.0"></script>
     <script src="js/config/dungeons.js?v=3.0"></script>
     <script src="js/config/technique-effects.js?v=3.0"></script>
@@ -26,13 +27,12 @@
     
     <!-- 工具函数模块 -->
     <script src="js/utils/storage.js?v=3.1"></script>
-    <script src="js/utils/icons.js?v=3.1"></script>
     <script src="js/utils/format.js"></script>
     <script src="js/utils/helpers.js?v=3.1"></script>
     <script src="js/utils/batch-operations.js?v=3.1"></script>
     
     <!-- UI模块 -->
-    <script src="js/ui/modals.js?v=3.0"></script>
+    <script src="js/ui/modals.js?v=3.2"></script>
     <script src="js/ui/notifications.js?v=3.0"></script>
     <script src="js/ui/interface.js?v=3.0"></script>
     
@@ -40,6 +40,8 @@
     <script src="js/systems/relationship.js?v=3.0"></script>
     <script src="js/systems/npc.js?v=3.0"></script>
     <script src="js/systems/division.js?v=3.0"></script>
+    <script src="js/systems/storyline-manager.js?v=3.0"></script>
+    <script src="js/systems/dynamic-events.js?v=3.0"></script>
     
     <!-- 核心游戏逻辑（保留legacy.js作为临时方案） -->
     <script src="js/legacy.js?v=3.0"></script>
@@ -259,6 +261,7 @@
                     <button class="tab" onclick="switchTab('combat')">战斗冒险</button>
                     <button class="tab" onclick="switchTab('sect')">门派系统</button>
                     <button class="tab" onclick="switchTab('relationships')">人际关系</button>
+                    <button class="tab" onclick="switchTab('storylines')">剧情线</button>
                     <button class="tab" onclick="switchTab('immortal')">仙界飞升</button>
                     <button class="tab" onclick="switchTab('achievements')">成就系统</button>
                     <button class="tab" onclick="switchTab('save')">存档管理</button>
@@ -311,11 +314,6 @@
                         <div id="equipmentContent"></div>
                     </div>
                     
-                    <!-- 战斗技能 -->
-                    <div style="margin-bottom: 30px;">
-                        <h3 style="font-size: 16px; margin-bottom: 15px;"><span class="icon-zap"></span> 战斗技能 Combat Skills</h3>
-                        <div id="combatSkillsContent"></div>
-                    </div>
                     
                     <!-- 天赋系统 -->
                     <div>
@@ -342,7 +340,13 @@
                     <div id="relationshipsContent"></div>
                 </div>
 
-                <!-- 7. 仙界飞升 -->
+                <!-- 7. 剧情线 -->
+                <div id="storylines-tab" class="tab-content">
+                    <div class="panel-title">剧情线 Storylines</div>
+                    <div id="storylinesContent"></div>
+                </div>
+
+                <!-- 8. 仙界飞升 -->
                 <div id="immortal-tab" class="tab-content">
                     <div class="panel-title">仙界飞升 Immortal Ascension</div>
                     
@@ -415,6 +419,10 @@
             <button class="nav-item" onclick="switchTab('relationships')" data-tab="relationships">
                 <span class="nav-icon" id="nav-relationships-icon"></span>
                 <span class="nav-label">人际</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('storylines')" data-tab="storylines">
+                <span class="nav-icon" id="nav-storylines-icon"></span>
+                <span class="nav-label">剧情</span>
             </button>
             <button class="nav-item" onclick="switchTab('immortal')" data-tab="immortal">
                 <span class="nav-icon" id="nav-immortal-icon"></span>

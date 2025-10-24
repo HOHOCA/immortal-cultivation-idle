@@ -75,7 +75,6 @@ function ensureDataStructure() {
     
     // 确保新功能的数据结构存在
     if (!gameData.npcRelationships) gameData.npcRelationships = {};
-    if (!gameData.combatSkills) gameData.combatSkills = [];
     if (!gameData.combatEquipment) gameData.combatEquipment = defaultGameData.combatEquipment;
     if (!gameData.artifacts) gameData.artifacts = [];
     if (!gameData.talents) gameData.talents = [];
@@ -131,7 +130,6 @@ function migrateSaveData(oldData, fromVersion) {
     if (fromVersion && fromVersion.startsWith('2.0')) {
         console.log('迁移 2.0 -> 2.1');
         // 添加新的战斗系统数据
-        if (!data.combatSkills) data.combatSkills = [];
         if (!data.combatEquipment) {
             data.combatEquipment = { weapon: null, armor: null, accessory: null };
         }

@@ -405,6 +405,14 @@ const SVGIcons = {
         <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
             <path d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z"/>
         </svg>
+    `,
+    
+    // 剧情/故事线
+    story: (size = 16, color = 'currentColor') => `
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            <path d="M8,12H16M8,16H16M8,8H12"/>
+        </svg>
     `
 };
 
@@ -436,6 +444,7 @@ const icon = {
         list: () => SVGIcons.list(16),
         building: () => SVGIcons.building(16),
         users: () => SVGIcons.users(16),
+        story: () => SVGIcons.story(16),
         
         // UI控制图标
         moon: () => SVGIcons.moon(16),

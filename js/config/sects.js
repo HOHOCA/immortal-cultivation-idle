@@ -199,7 +199,7 @@ const sects = {
                 color: '#8e44ad',
                 requiredRealm: 1,
                 tasks: ['demon_cultivation', 'absorb_power', 'conquest'],
-                warning: '⚠️ 魔道修炼会降低正派NPC好感',
+                warning: `${getSvg('alert')} 魔道修炼会降低正派NPC好感`,
                 divisions: {
                     demon_palace: {
                         name: '魔神殿',
@@ -236,7 +236,7 @@ const sects = {
                 color: '#2c3e50',
                 requiredRealm: 1,
                 tasks: ['mind_control_practice', 'conspiracy', 'dark_ritual'],
-                warning: '⚠️ 邪教弟子会被正派敌视',
+                warning: `${getSvg('alert')} 邪教弟子会被正派敌视`,
                 divisions: {
                     evil_arts: {
                         name: '邪术堂',
@@ -273,7 +273,7 @@ const sects = {
                 color: '#c0392b',
                 requiredRealm: 1,
                 tasks: ['blood_cultivation', 'slaughter', 'blood_ritual'],
-                warning: '⚠️ 血道修炼需要杀戮，会被所有正派追杀',
+                warning: `${getSvg('alert')} 血道修炼需要杀戮，会被所有正派追杀`,
                 divisions: {
                     blood_god: {
                         name: '血神殿',

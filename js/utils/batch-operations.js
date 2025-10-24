@@ -183,7 +183,7 @@ function upgradeAllFacilities(targetLevel = null) {
         }
         
         if (typeof addLog === 'function') {
-            addLog(`🏗️ ${message}`);
+            addLog(`${getSvg('building')} ${message}`);
         }
         
         if (typeof updateUI === 'function') {
@@ -388,7 +388,7 @@ function calculateOfflineReward(offlineTime) {
     
     return {
         offlineTime: effectiveTime,
-        displayTime: formatTime(effectiveTime),
+        displayTime: formatTimeMs(effectiveTime),
         spiritGained: offlineSpiritGain,
         stoneGained: offlineStoneGain,
         pillsGained: offlinePillGain,
@@ -426,7 +426,7 @@ function calculateSpiritPerSecond() {
 /**
  * 格式化时间
  */
-function formatTime(ms) {
+function formatTimeMs(ms) {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -481,11 +481,11 @@ function showOfflineRewardDialog(reward) {
     
     let warningText = '';
     if (reward.wasLimited) {
-        warningText = '<div style="margin-top: 12px; padding: 8px; background: #fff3cd; border-radius: 4px; font-size: 11px; color: #856404;">⚠️ 离线时间超过8小时，仅计算前8小时的收益</div>';
+        warningText = `<div style="margin-top: 12px; padding: 8px; background: #fff3cd; border-radius: 4px; font-size: 11px; color: #856404;">${getSvg('alert')} 离线时间超过8小时，仅计算前8小时的收益</div>`;
     }
     
     content.innerHTML = `
-        <div style="font-size: 48px; margin-bottom: 16px;">🎁</div>
+        <div style="font-size: 48px; margin-bottom: 16px;">${getSvg('gift')}</div>
         <h2 style="margin: 0 0 16px 0; font-size: 20px; color: #2c3e50; font-weight: 600;">离线收益</h2>
         <div style="margin-bottom: 20px; font-size: 13px; color: #7f8c8d;">
             你离开了 <strong style="color: #3498db;">${reward.displayTime}</strong>
@@ -529,7 +529,7 @@ function claimOfflineReward(spirit, stone, pills) {
     gameData.player.pills += pills;
     
     if (typeof addLog === 'function') {
-        addLog(`🎁 领取离线收益：${formatNumber(spirit)} 灵力，${formatNumber(stone)} 灵石，${pills} 丹药`);
+        addLog(`${getSvg('gift')} 领取离线收益：${formatNumber(spirit)} 灵力，${formatNumber(stone)} 灵石，${pills} 丹药`);
     }
     
     if (typeof updateUI === 'function') {

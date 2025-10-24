@@ -153,7 +153,7 @@ function showAchievementNotification(achievement) {
     `;
     
     notification.innerHTML = `
-        <div style="font-size: 24px; margin-bottom: 10px;">🏆</div>
+        <div style="font-size: 24px; margin-bottom: 10px;">${getSvg('trophy')}</div>
         <div style="font-size: 18px; font-weight: 600; margin-bottom: 5px;">成就解锁！</div>
         <div style="font-size: 16px; margin-bottom: 10px;">${achievement.name}</div>
         <div style="font-size: 12px; opacity: 0.9;">${achievement.desc}</div>

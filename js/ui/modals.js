@@ -10,39 +10,47 @@ function showModal(title, content, buttons = []) {
     const modal = document.createElement('div');
     modal.setAttribute('data-modal', 'true');
     
-    // 使用内联样式，完全独立
-    modal.style.position = 'fixed';
-    modal.style.top = '0px';
-    modal.style.left = '0px';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
-    modal.style.zIndex = '999999';
-    modal.style.display = 'block';
-    modal.style.margin = '0';
-    modal.style.padding = '0';
-    modal.style.boxSizing = 'border-box';
+    // 计算文档高度
+    const documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.clientHeight,
+        document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight
+    );
+    
+    
+    // 使用inset:0完全覆盖
+    modal.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0,0,0,0.8);
+        z-index: 2147483647;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow: auto;
+    `;
     
     // 创建内容卡片
     const card = document.createElement('div');
+    const cardWidth = Math.min(900, window.innerWidth - 40);
+    const cardHeight = Math.min(700, window.innerHeight - 40);
     
-    // 计算窗口中心位置
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    const cardWidth = Math.min(600, window.innerWidth - 40);
-    const cardHeight = Math.min(600, window.innerHeight - 40);
-    
-    card.style.position = 'absolute';
-    card.style.left = (centerX - cardWidth / 2) + 'px';
-    card.style.top = (centerY - cardHeight / 2) + 'px';
-    card.style.width = cardWidth + 'px';
-    card.style.maxHeight = cardHeight + 'px';
-    card.style.backgroundColor = 'white';
-    card.style.padding = '30px';
-    card.style.borderRadius = '8px';
-    card.style.boxShadow = '0 10px 40px rgba(0,0,0,0.5)';
-    card.style.overflow = 'auto';
-    card.style.boxSizing = 'border-box';
+    card.style.cssText = `
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        overflow: auto;
+        box-sizing: border-box;
+        width: ${cardWidth}px;
+        max-height: ${cardHeight}px;
+        position: relative;
+    `;
     
     let html = '';
     
@@ -76,6 +84,8 @@ function showModal(title, content, buttons = []) {
     });
     
     // 确保模态框在页面最顶层，不受其他元素影响
+    // 临时禁用body的滚动
+    document.body.style.overflow = 'hidden';
     document.body.appendChild(modal);
     
     return modal;
@@ -101,23 +111,38 @@ function closeModal() {
             }
         }
     });
+    
+    // 恢复body的滚动
+    document.body.style.overflow = '';
 }
 
 // 显示门派选择界面
 function showSectSelection() {
     const sectModal = document.createElement('div');
     sectModal.id = 'sectModal';
+    // 计算文档高度
+    const documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.clientHeight,
+        document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight
+    );
+    
     sectModal.style.cssText = `
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0;
         background: rgba(0,0,0,0.8);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1001;
+        z-index: 2147483647;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+        pointer-events: auto;
+        isolation: isolate;
     `;
     
     const sectCard = document.createElement('div');
@@ -303,17 +328,29 @@ function showMasterSelection(sectId) {
     // 创建选择师傅的模态框
     const masterModal = document.createElement('div');
     masterModal.id = 'masterSelectionModal';
+    // 计算文档高度
+    const documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.clientHeight,
+        document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight
+    );
+    
     masterModal.style.cssText = `
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0;
         background: rgba(0,0,0,0.85);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1003;
+        z-index: 2147483647;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+        pointer-events: auto;
+        isolation: isolate;
     `;
     
     const masterCard = document.createElement('div');
@@ -508,17 +545,29 @@ function showDiscipleshipCeremony(sectId, masterId) {
     
     // 创建拜师仪式模态框
     const ceremonyModal = document.createElement('div');
+    // 计算文档高度
+    const documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.clientHeight,
+        document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight
+    );
+    
     ceremonyModal.style.cssText = `
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0;
         background: rgba(0,0,0,0.9);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1004;
+        z-index: 2147483647;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+        pointer-events: auto;
+        isolation: isolate;
         animation: fadeIn 0.5s ease;
     `;
     
@@ -586,7 +635,7 @@ function showDiscipleshipCeremony(sectId, masterId) {
     // 拜师奖励
     html += `<div style="background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px; margin-bottom: 25px;">`;
     html += `<div style="font-size: 14px; font-weight: 600; color: #2c3e50; margin-bottom: 12px; text-align: center;">`;
-    html += `🎁 拜师礼`;
+    html += `${getSvg('gift')} 拜师礼`;
     html += `</div>`;
     html += `<div style="font-size: 13px; color: #555; line-height: 2; text-align: left;">`;
     html += `<div style="display: flex; align-items: center; margin-bottom: 6px;">`;
@@ -688,7 +737,7 @@ function showBattleAnimation(boss, callback) {
     
     battleCard.innerHTML = `
         <div style="font-size: 24px; font-weight: 600; color: #2c3e50; margin-bottom: 20px;">
-            ⚔️ 战斗开始！
+            ${getSvg('sword')} 战斗开始！
         </div>
         <div style="font-size: 18px; color: #e74c3c; margin-bottom: 15px;">
             vs ${boss.name}

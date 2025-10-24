@@ -220,7 +220,7 @@ const randomEvents = {
                                 return `你在秘境中感悟良多，灵力增加 ${formatNumber(gain)}`;
                             } else {
                                 gameData.player.breakthroughProgress = 100;
-                                return '⚡ 你在秘境中得到传承，突破进度直接达到100%！';
+                                return `${getSvg('zap')} 你在秘境中得到传承，突破进度直接达到100%！`;
                             }
                         }
                     },
@@ -291,7 +291,7 @@ const randomEvents = {
                 minRealm: 2,
                 choices: [
                     {
-                        text: '⚔️ 参与争夺（PvP战斗）',
+                        text: `${getSvg('sword')} 参与争夺（PvP战斗）`,
                         result: () => {
                             // 触发PvP战斗事件
                             gameData.currentEvent = null; // 清除当前事件
@@ -307,7 +307,7 @@ const randomEvents = {
                             if (Math.random() < 0.4) {
                                 const gain = 500 + gameData.player.realm * 150;
                                 gameData.player.spiritStone += gain;
-                                return `⭐ 你成功夺得宝物，获得 ${gain} 块灵石！`;
+                                return `${getSvg('star')} 你成功夺得宝物，获得 ${gain} 块灵石！`;
                             } else {
                                 return '激烈争夺中你未能取胜，但平安离开';
                             }
@@ -1307,7 +1307,7 @@ const randomEvents = {
                             gameData.player.immortalRealmLevel = 1;
                             gameData.ascensionCount = (gameData.ascensionCount || 0) + 1;
                             
-                            return `<span class="log-success">🌟 你与${masterName}共同飞升！获得师徒羁绊加成：保留70%资源，获得200仙石和3道果，解锁永久"师徒同心"加成（全属性+5%）！</span>`;
+                            return `<span class="log-success">${getSvg('star')} 你与${masterName}共同飞升！获得师徒羁绊加成：保留70%资源，获得200仙石和3道果，解锁永久"师徒同心"加成（全属性+5%）！</span>`;
                         }
                     },
                     {
@@ -1325,4 +1325,4 @@ const randomEvents = {
                     }
                 ]
             }
-        };
+    };

@@ -26,7 +26,11 @@ function formatTime(seconds) {
     } else if (seconds < 3600) {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60);
-        return `${minutes}分${remainingSeconds}秒`;
+        if (remainingSeconds === 0) {
+            return `${minutes}分钟`;
+        } else {
+            return `${minutes}分${remainingSeconds}秒`;
+        }
     } else {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
@@ -161,13 +165,6 @@ function formatList(items, maxItems = 5) {
     }
 }
 
-// 格式化技能显示
-function formatSkill(skillId) {
-    const skill = combatSkills[skillId];
-    if (!skill) return '未知技能';
-    
-    return `${skill.name} (伤害:${skill.damage}x, 消耗:${skill.cost}灵力)`;
-}
 
 // 格式化装备显示
 function formatEquipment(equipmentId) {
@@ -187,7 +184,7 @@ function formatEquipment(equipmentId) {
 function formatAchievement(achievement) {
     if (!achievement) return '未知成就';
     
-    const stars = '⭐'.repeat(Math.min(3, achievement.category === 'hidden' ? 3 : 1));
+    const stars = getSvg('star').repeat(Math.min(3, achievement.category === 'hidden' ? 3 : 1));
     return `${stars} ${achievement.name}`;
 }
 

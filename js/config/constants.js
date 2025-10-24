@@ -13,7 +13,7 @@ const GAME_CONFIG = {
     
     // 随机事件
     EVENT_TRIGGER_CHANCE: 0.3,              // 随机事件触发概率 30%
-    EVENT_MIN_INTERVAL: 60000,              // 事件最小间隔（毫秒）1分钟
+    EVENT_MIN_INTERVAL: 300000,             // 事件最小间隔（毫秒）5分钟
 };
 
 // ========== 修炼系统 ==========

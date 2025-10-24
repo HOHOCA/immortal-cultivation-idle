@@ -34,9 +34,8 @@ function switchTab(tabName) {
             if (typeof renderSpiritFieldInfo === 'function') renderSpiritFieldInfo();
             break;
         case 'power':
-            // 战力提升：渲染装备、技能、天赋
+            // 战力提升：渲染装备、天赋
             if (typeof renderEquipment === 'function') renderEquipment();
-            if (typeof renderCombatSkills === 'function') renderCombatSkills();
             if (typeof renderTalentsContent === 'function') renderTalentsContent();
             break;
         case 'combat':
@@ -296,7 +295,7 @@ function updateUI() {
         // 判断是凡界还是仙界
         if (gameData.player.isInImmortalWorld) {
             const realm = immortalRealms[gameData.player.immortalRealm];
-            realmName.textContent = `🌟 ${realm.name}`;
+            realmName.textContent = `${getSvg('star')} ${realm.name}`;
             realmLevel.textContent = `第${gameData.player.immortalRealmLevel}层`;
         } else {
             const realm = realms[gameData.player.realm];

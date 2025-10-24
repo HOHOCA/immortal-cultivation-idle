@@ -217,7 +217,6 @@
             lastUpdate: Date.now(),
             
             // 战斗系统
-            combatSkills: [], // 已学习的战斗技能
             combatEquipment: { // 战斗装备
                 weapon: null,
                 armor: null,
@@ -272,7 +271,7 @@
                 getBenefit: (level) => `每分钟 +${level} 灵石`
             },
             immortalPond: {
-                name: '⭐ 仙池`,
+                name: `${getSvg('star')} 仙池`,
                 desc: '仙界灵泉，大幅提升灵力产出',
                 baseCost: 5000,
                 costMultiplier: 3,
@@ -280,7 +279,7 @@
                 getBenefit: (level) => `灵力产出 +${level * 50}%`
             },
             celestialTree: {
-                name: '⭐ 仙树`,
+                name: `${getSvg('star')} 仙树`,
                 desc: '天地灵根，每小时产出珍贵资源',
                 baseCost: 10000,
                 costMultiplier: 3.5,
@@ -1307,7 +1306,7 @@
             
             // === 飞升专属事件 ===
             immortal_meeting: {
-                name: '⭐ 仙人相会`,
+                name: `${getSvg('star')} 仙人相会`,
                 desc: '你遇到了一位真正的仙人，他来自仙界...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -1334,7 +1333,7 @@
             },
             
             celestial_fragment: {
-                name: '⭐ 仙界碎片`,
+                name: `${getSvg('star')} 仙界碎片`,
                 desc: '仙界与凡界的空间裂缝出现，可以获取仙界资源...',
                 type: 'opportunity',
                 minRealm: 2,
@@ -1364,7 +1363,7 @@
             },
             
             past_life_memory: {
-                name: '⭐ 前世记忆`,
+                name: `${getSvg('star')} 前世记忆`,
                 desc: '飞升后的你偶尔会回忆起前世的修炼经历...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -1434,7 +1433,7 @@
             
             // ==================== 仙界专属事件 ====================
             immortal_dao_comprehension: {
-                name: '⭐ 仙道顿悟`,
+                name: `${getSvg('star')} 仙道顿悟`,
                 desc: '在仙界修炼，你突然领悟了仙道真谛...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -1463,7 +1462,7 @@
             },
             
             immortal_treasure: {
-                name: '⭐ 仙界宝库`,
+                name: `${getSvg('star')} 仙界宝库`,
                 desc: '你发现了一座隐藏的仙界宝库...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -1501,7 +1500,7 @@
             },
             
             immortal_challenge: {
-                name: '⭐ 仙人挑战`,
+                name: `${getSvg('star')} 仙人挑战`,
                 desc: '一位仙人向你发起挑战，这是证明自己的机会...',
                 type: 'opportunity',
                 minRealm: 0,
@@ -2155,10 +2154,17 @@
                 initializeNPCData();
             }
             
+            // 初始化剧情线系统
+            if (typeof storylineManager !== 'undefined' && typeof storylinesConfig !== 'undefined') {
+                storylineManager.init(storylinesConfig);
+                console.log('[剧情系统] 已初始化');
+            }
+            
             // 🆕 v3.1: 检查离线收益
             if (typeof checkOfflineReward === 'function') {
                 checkOfflineReward();
             }
+            
             
             // 检查是否需要显示门派选择（如果玩家达到筑基期但未选择门派）
             if (gameData.player.realm >= 1 && !gameData.sect) {
@@ -2182,7 +2188,6 @@
             renderSaveContent();
             // 新增渲染函数
             renderSpiritFieldInfo();
-            renderCombatSkills();
             renderImmortalTab();
             addLog('开始修仙之路...');
             
@@ -2375,6 +2380,7 @@
                 'nav-combat-icon': 'sword',  // 战斗用剑图标
                 'nav-sect-icon': 'temple',
                 'nav-relationships-icon': 'people',
+                'nav-storylines-icon': 'story',  // 剧情线用故事图标
                 'nav-immortal-icon': 'star',
                 'nav-achievements-icon': 'trophy',
                 'nav-save-icon': 'save'
@@ -2692,6 +2698,8 @@
                         renderSectContent();
                     } else if (tabText.includes('人际关系') && typeof renderRelationshipsPanel === 'function') {
                         renderRelationshipsPanel();
+                    } else if (tabText.includes('剧情线')) {
+                        renderStorylines();
                     } else if (tabText.includes('成就')) {
                         renderAchievements();
                     } else if (tabText.includes('存档')) {
@@ -2705,10 +2713,10 @@
                 checkAchievements();
             }, 5000);
             
-            // 随机事件触发
+            // 随机事件触发 - 优化为30秒检查一次
             setInterval(() => {
                 tryTriggerEvent();
-            }, 60000); // 每分钟检查一次
+            }, 30000); // 每30秒检查一次（原60秒）
             
             // 丹房自动生产
             setInterval(() => {
@@ -3615,6 +3623,30 @@
             // 法宝加成
             playerPower += gameData.artifacts.length * 15;
             
+            // 技能加成战斗力
+            let techniqueBonus = 1.0;
+            const learnedTechniquesList = [];
+            if (gameData.learnedTechniques) {
+                for (let techId in gameData.learnedTechniques) {
+                    const techEffect = learnedTechniqueEffects[techId];
+                    if (techEffect) {
+                        learnedTechniquesList.push({ id: techId, name: techEffect.name });
+                        for (let effect of techEffect.effects) {
+                            if (effect.type === 'attackBonus') {
+                                techniqueBonus += effect.value;
+                            } else if (effect.type === 'combatBonus') {
+                                techniqueBonus += effect.value;
+                            } else if (effect.type === 'allBonus') {
+                                techniqueBonus += effect.value * 0.5; // 全属性加成按50%计入战斗
+                            } else if (effect.type === 'spiritualPower') {
+                                playerPower += effect.value * 0.1; // 灵力加成转换为战力
+                            }
+                        }
+                    }
+                }
+            }
+            playerPower = Math.floor(playerPower * techniqueBonus);
+            
             const enemyPower = Math.floor(playerPower * (0.7 + Math.random() * 0.6));
             
             let html = '';
@@ -3686,6 +3718,20 @@
             
             html += `</div>`;
             
+            // 显示已学技能（如果有）
+            if (learnedTechniquesList.length > 0) {
+                html += `<div style="margin-bottom: 15px; padding: 12px; background: linear-gradient(135deg, rgba(156,39,176,0.05), rgba(186,104,200,0.05)); border: 1px solid rgba(156,39,176,0.2); border-radius: 4px;">`;
+                html += `<div style="font-size: 10px; color: #9c27b0; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;">`;
+                html += `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: -2px; margin-right: 4px;"><path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,1 0 0,1 2,14H3A7,7 0 0,1 10,7H11V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2Z"/></svg>`;
+                html += `已学技能</div>`;
+                html += `<div style="display: flex; flex-wrap: wrap; gap: 6px;">`;
+                for (let tech of learnedTechniquesList) {
+                    html += `<span style="background: rgba(156,39,176,0.1); color: #9c27b0; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; border: 1px solid rgba(156,39,176,0.2);">${tech.name}</span>`;
+                }
+                html += `</div>`;
+                html += `</div>`;
+            }
+            
             // 战斗统计面板
             html += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px;">`;
             html += `<div style="background: #f8f9fa; padding: 12px; border-radius: 4px; text-align: center; border: 1px solid #e9ecef;">`;
@@ -3710,7 +3756,7 @@
             html += `</div>`;
             html += `</div>`;
             
-            html += `<button class="btn btn-primary" id="startBattleBtn" onclick="executeBattle(${playerPower}, ${enemyPower})" style="width: 100%; padding: 12px; font-size: 12px; font-weight: 500; background: #2196f3; border: 1px solid #2196f3; color: white; border-radius: 4px; transition: all 0.3s;">开始战斗</button>`;
+            html += `<button class="btn btn-primary" id="startBattleBtn" onclick="executeBattle(${playerPower}, ${enemyPower}, ${JSON.stringify(learnedTechniquesList).replace(/"/g, '&quot;')})" style="width: 100%; padding: 12px; font-size: 12px; font-weight: 500; background: #2196f3; border: 1px solid #2196f3; color: white; border-radius: 4px; transition: all 0.3s;">开始战斗</button>`;
             
             // 添加动画样式
             html += `<style>
@@ -3741,9 +3787,17 @@
         }
 
         // 执行战斗
-        function executeBattle(playerPower, enemyPower) {
+        function executeBattle(playerPower, enemyPower, learnedTechniquesListStr) {
             document.getElementById('startBattleBtn').disabled = true;
             document.getElementById('startBattleBtn').textContent = '战斗中...';
+            
+            // 解析技能列表
+            let learnedTechniquesList = [];
+            try {
+                learnedTechniquesList = JSON.parse(learnedTechniquesListStr || '[]');
+            } catch (e) {
+                learnedTechniquesList = [];
+            }
             
             const battleLog = document.getElementById('battleLog');
             battleLog.innerHTML = '';
@@ -3861,13 +3915,22 @@
                 log += `<div style="font-weight: 500; color: #6c757d; margin-bottom: 6px; font-size: 10px; letter-spacing: 1px;">ROUND ${round}</div>`;
                 
                 // 玩家攻击日志
+                // 随机选择技能显示（70%概率，提高显示频率）
+                let techniqueUsed = '';
+                if (learnedTechniquesList && learnedTechniquesList.length > 0 && Math.random() < 0.7) {
+                    const randomTech = learnedTechniquesList[Math.floor(Math.random() * learnedTechniquesList.length)];
+                    techniqueUsed = `<span style="color: #9c27b0; font-weight: 500;">[${randomTech.name}]</span> `;
+                }
+                
                 if (playerCritical) {
                     log += `<div style="font-size: 11px; color: #2c3e50; margin-bottom: 4px; line-height: 1.5;">`;
+                    log += techniqueUsed;
                     log += `<span style="color: #2196f3; font-weight: 600;">[暴击]</span> `;
                     log += `你 → 对手 <span style="color: #f44336; font-weight: 600; font-family: monospace;">${playerDamage}</span>`;
                     log += `</div>`;
                 } else {
                     log += `<div style="font-size: 11px; color: #2c3e50; margin-bottom: 4px; line-height: 1.5;">`;
+                    log += techniqueUsed;
                     log += `<span style="color: #95a5a6;">[攻击]</span> `;
                     log += `你 → 对手 <span style="color: #2196f3; font-weight: 600; font-family: monospace;">${playerDamage}</span>`;
                     log += `</div>`;
@@ -4560,6 +4623,28 @@
                 getBenefit: (level) => `灵力获取 +${(level * 12).toFixed(0)}%, 突破成功率 +${level * 2}%`
             },
             
+            // === 练气期专属功法 ===
+            basic_meditation: {
+                name: '基础冥想术',
+                desc: '最基础的修炼功法，适合初学者',
+                maxLevel: 5,
+                baseCost: 200,
+                costMultiplier: 1.5,
+                requiredRealm: 0,
+                category: 'basic',
+                getBenefit: (level) => `修炼速度 +${(level * 2).toFixed(0)}%, 灵力获取 +${(level * 8).toFixed(0)}%`
+            },
+            efficient_cultivation: {
+                name: '高效修炼法',
+                desc: '提高修炼效率的实用功法',
+                maxLevel: 3,
+                baseCost: 500,
+                costMultiplier: 2,
+                requiredRealm: 0,
+                category: 'basic',
+                getBenefit: (level) => `修炼速度 +${(level * 5).toFixed(0)}%, 突破成功率 +${level * 3}%`
+            },
+            
             // === 进阶功法（筑基期以上） ===
             advanced: {
                 name: '高级心法',
@@ -5201,6 +5286,34 @@
                     }
                     
                     html += `<div style="font-size:11px; color:#7f8c8d; margin-bottom:6px;">${costText}</div>`;
+                    
+                    // 显示法宝加成效果
+                    const artifact = artifacts[id];
+                    if (artifact && artifact.bonus) {
+                        const bonusTexts = [];
+                        if (artifact.bonus.spiritualPowerBonus) {
+                            bonusTexts.push(`灵力+${(artifact.bonus.spiritualPowerBonus * 100).toFixed(0)}%`);
+                        }
+                        if (artifact.bonus.breakthroughBonus) {
+                            bonusTexts.push(`突破+${(artifact.bonus.breakthroughBonus * 100).toFixed(0)}%`);
+                        }
+                        if (artifact.bonus.spiritStoneBonus) {
+                            bonusTexts.push(`灵石+${(artifact.bonus.spiritStoneBonus * 100).toFixed(0)}%`);
+                        }
+                        if (artifact.bonus.combatPower) {
+                            bonusTexts.push(`战力+${artifact.bonus.combatPower}`);
+                        }
+                        if (artifact.bonus.pillBonus) {
+                            bonusTexts.push(`丹药+${(artifact.bonus.pillBonus * 100).toFixed(0)}%`);
+                        }
+                        if (artifact.bonus.facilityBonus) {
+                            bonusTexts.push(`设施+${(artifact.bonus.facilityBonus * 100).toFixed(0)}%`);
+                        }
+                        
+                        if (bonusTexts.length > 0) {
+                            html += `<div style="font-size:11px; color:#3498db; margin-bottom:6px; font-weight:600;">加成: ${bonusTexts.join(', ')}</div>`;
+                        }
+                    }
                     
                     // 显示动态成功率
                     const dynamicSuccessRate = calculateForgingSuccessRate(id);
@@ -6589,26 +6702,11 @@
                 reward: { spiritStone: 1000 }
             },
             
-            // ==================== 战斗技能成就 ====================
-            learn_skill: {
-                name: '技能初学者',
-                desc: '学习第一个战斗技能',
-                category: 'combat',
-                check: () => gameData.combatSkills && gameData.combatSkills.length > 0,
-                reward: { spiritStone: 200 }
-            },
-            skill_master: {
-                name: '技能大师',
-                desc: '学习所有战斗技能',
-                category: 'combat',
-                check: () => gameData.combatSkills && gameData.combatSkills.length >= Object.keys(combatSkills).length,
-                reward: { spiritStone: 1500 }
-            },
             
             // ==================== 隐藏成就 ====================
             // 战斗成就
             battle_master: {
-                name: '⭐ 战无不胜',
+                name: `${getSvg('star')} 战无不胜`,
                 desc: '???（战斗胜利10次）',
                 category: 'hidden',
                 hidden: true,
@@ -6618,7 +6716,7 @@
                 bonus: { combatPowerBonus: 0.05 } // 战斗力+5%
             },
             battle_legend: {
-                name: '⭐ 战斗传说',
+                name: `${getSvg('star')} 战斗传说`,
                 desc: '???（战斗胜利50次）',
                 category: 'hidden',
                 hidden: true,
@@ -6628,7 +6726,7 @@
                 bonus: { combatPowerBonus: 0.1, spiritualPowerBonus: 0.05 }
             },
             boss_slayer: {
-                name: '⭐ 屠龙勇士',
+                name: `${getSvg('star')} 屠龙勇士`,
                 desc: '???（击败所有Boss）',
                 category: 'hidden',
                 hidden: true,
@@ -6640,7 +6738,7 @@
             
             // 财富成就（隐藏）
             spirit_stone_10k: {
-                name: '⭐ 灵石大亨',
+                name: `${getSvg('star')} 灵石大亨`,
                 desc: '???（拥有10000灵石）',
                 category: 'hidden',
                 hidden: true,
@@ -6650,7 +6748,7 @@
                 bonus: { spiritStoneBonus: 0.05 } // 灵石获取+5%
             },
             spirit_stone_100k: {
-                name: '⭐ 富可敌国',
+                name: `${getSvg('star')} 富可敌国`,
                 desc: '???（拥有100000灵石）',
                 category: 'hidden',
                 hidden: true,
@@ -6662,7 +6760,7 @@
             
             // 速度成就（隐藏）
             quick_foundation: {
-                name: '⭐ 天赋异禀',
+                name: `${getSvg('star')} 天赋异禀`,
                 desc: '???（100天内达到筑基期）',
                 category: 'hidden',
                 hidden: true,
@@ -6672,7 +6770,7 @@
                 bonus: { spiritualPowerBonus: 0.2 } // 灵力获取+20%
             },
             quick_golden: {
-                name: '⭐ 修仙奇才',
+                name: `${getSvg('star')} 修仙奇才`,
                 desc: '???（500天内达到金丹期）',
                 category: 'hidden',
                 hidden: true,
@@ -6684,7 +6782,7 @@
             
             // 完美成就（隐藏）
             perfect_realm: {
-                name: '⭐ 境界圆满',
+                name: `${getSvg('star')} 境界圆满`,
                 desc: '???（所有境界都达到第9层后才突破）',
                 category: 'hidden',
                 hidden: true,
@@ -6699,7 +6797,7 @@
             
             // 收集成就（隐藏）
             technique_master: {
-                name: '⭐ 功法宗师',
+                name: `${getSvg('star')} 功法宗师`,
                 desc: '???（学习所有功法）',
                 category: 'hidden',
                 hidden: true,
@@ -6715,7 +6813,7 @@
                 bonus: { spiritualPowerBonus: 0.25 }
             },
             all_talents: {
-                name: '⭐ 天赋满级',
+                name: `${getSvg('star')} 天赋满级`,
                 desc: '???（激活所有天赋）',
                 category: 'hidden',
                 hidden: true,
@@ -6727,7 +6825,7 @@
             
             // 特殊成就（隐藏）
             no_pill_foundation: {
-                name: '⭐ 自力更生',
+                name: `${getSvg('star')} 自力更生`,
                 desc: '???（不使用丹药达到筑基期）',
                 category: 'hidden',
                 hidden: true,
@@ -6737,7 +6835,7 @@
                 bonus: { breakthroughBonus: 0.1 }
             },
             lucky_one: {
-                name: '⭐ 欧皇附体',
+                name: `${getSvg('star')} 欧皇附体`,
                 desc: '???（连续成功突破10次）',
                 category: 'hidden',
                 hidden: true,
@@ -6747,7 +6845,7 @@
                 bonus: { breakthroughBonus: 0.08 }
             },
             dungeon_master: {
-                name: '⭐ 副本专家',
+                name: `${getSvg('star')} 副本专家`,
                 desc: '???（完成50次副本）',
                 category: 'hidden',
                 hidden: true,
@@ -6765,7 +6863,7 @@
             
             // 终极成就（隐藏）
             true_immortal: {
-                name: '⭐⭐⭐ 真·仙人',
+                name: `${getSvg('star')}${getSvg('star')}${getSvg('star')} 真·仙人`,
                 desc: '???（飞升10次且达到渡劫期）',
                 category: 'hidden',
                 hidden: true,
@@ -6775,7 +6873,7 @@
                 bonus: { allBonus: 0.5, spiritualPowerBonus: 0.5, breakthroughBonus: 0.2 } // 超强加成
             },
             perfect_cultivator: {
-                name: '⭐⭐⭐ 完美修士',
+                name: `${getSvg('star')}${getSvg('star')}${getSvg('star')} 完美修士`,
                 desc: '???（完成所有非隐藏成就）',
                 category: 'hidden',
                 hidden: true,
@@ -6859,7 +6957,7 @@
             },
             
             element_master: {
-                name: '⭐ 五行大师',
+                name: `${getSvg('star')} 五行大师`,
                 desc: '???（五行属性强度达到10级）',
                 category: 'hidden',
                 hidden: true,
@@ -6916,7 +7014,7 @@
             },
             
             pill_master: {
-                name: '⭐ 丹药大师',
+                name: `${getSvg('star')} 丹药大师`,
                 desc: '???（同时拥有500枚丹药）',
                 category: 'hidden',
                 hidden: true,
@@ -6935,7 +7033,7 @@
             },
             
             dao_fruit_master: {
-                name: '⭐ 道果仙人',
+                name: `${getSvg('star')} 道果仙人`,
                 desc: '???（拥有20道果）',
                 category: 'hidden',
                 hidden: true,
@@ -6955,7 +7053,7 @@
             },
             
             undefeated: {
-                name: '⭐ 百战不殆',
+                name: `${getSvg('star')} 百战不殆`,
                 desc: '???（连胜20场）',
                 category: 'hidden',
                 hidden: true,
@@ -6967,7 +7065,7 @@
             
             // 时间相关
             speed_runner: {
-                name: '⭐ 速通传说',
+                name: `${getSvg('star')} 速通传说`,
                 desc: '???（300天内达到元婴期）',
                 category: 'hidden',
                 hidden: true,
@@ -6988,7 +7086,7 @@
             
             // 综合成就
             resource_master: {
-                name: '⭐ 资源大师',
+                name: `${getSvg('star')} 资源大师`,
                 desc: '???（同时拥有50000灵石、200丹药、50仙石）',
                 category: 'hidden',
                 hidden: true,
@@ -6999,7 +7097,7 @@
             },
             
             power_overwhelming: {
-                name: '⭐ 力压群雄',
+                name: `${getSvg('star')} 力压群雄`,
                 desc: '???（战斗力超过10000）',
                 category: 'hidden',
                 hidden: true,
@@ -7010,7 +7108,7 @@
             },
             
             ascension_master: {
-                name: '⭐ 飞升之主',
+                name: `${getSvg('star')} 飞升之主`,
                 desc: '???（飞升20次）',
                 category: 'hidden',
                 hidden: true,
@@ -7030,7 +7128,7 @@
             },
             
             no_failure: {
-                name: '⭐ 从不失败',
+                name: `${getSvg('star')} 从不失败`,
                 desc: '???（突破50次从未失败）',
                 category: 'hidden',
                 hidden: true,
@@ -7140,7 +7238,7 @@
             },
             
             lucky_dog: {
-                name: '⭐ 天选之人',
+                name: `${getSvg('star')} 天选之人`,
                 desc: '???（随机事件中10次都选对最佳选项）',
                 category: 'hidden',
                 hidden: true,
@@ -7204,8 +7302,400 @@
                 category: 'special',
                 check: () => (gameData.statistics.exports || 0) >= 5,
                 reward: { spiritStone: 2000, pills: 20 }
+            },
+            
+            // ========== 剧情线成就 ==========
+            first_storyline: {
+                name: '初入剧情',
+                desc: '开启第一条剧情线',
+                category: 'storyline',
+                check: () => {
+                    if (!gameData.storylines) return false;
+                    return Object.keys(gameData.storylines).length >= 1;
+                },
+                reward: { spiritStone: 500, pills: 5 }
+            },
+            
+            storyline_complete_1: {
+                name: '剧情达人',
+                desc: '完成任意1条剧情线',
+                category: 'storyline',
+                check: () => {
+                    if (!gameData.storylines) return false;
+                    return Object.values(gameData.storylines).filter(s => s.completed).length >= 1;
+                },
+                reward: { spiritStone: 1000, spiritualPower: 5000 }
+            },
+            
+            storyline_complete_3: {
+                name: '故事收集者',
+                desc: '完成3条不同的剧情线',
+                category: 'storyline',
+                check: () => {
+                    if (!gameData.storylines) return false;
+                    return Object.values(gameData.storylines).filter(s => s.completed).length >= 3;
+                },
+                reward: { spiritStone: 3000, spiritualPower: 10000, pills: 20 },
+                bonus: { spiritualPowerBonus: 0.05 }
+            },
+            
+            storyline_master: {
+                name: '剧情大师',
+                desc: '完成所有主线剧情',
+                category: 'storyline',
+                check: () => {
+                    if (!gameData.storylines) return false;
+                    const mainStorylines = ['mysterious_inheritance', 'sect_politics', 'immortal_romance', 'destiny_war'];
+                    return mainStorylines.every(id => 
+                        gameData.storylines[id] && gameData.storylines[id].completed
+                    );
+                },
+                reward: { spiritStone: 10000, spiritualPower: 50000, pills: 50 },
+                bonus: { spiritualPowerBonus: 0.15 }
+            },
+            
+            inheritance_master: {
+                name: '传承之主',
+                desc: '在【神秘传承】中获得完整传承',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.mysterious_inheritance;
+                    return storyline?.completed && storyline?.outcome === 'cultivation_complete';
+                },
+                reward: { spiritualPower: 15000, breakthroughProgress: 20 }
+            },
+            
+            sect_peacemaker: {
+                name: '宗门和事佬',
+                desc: '在【宗门风云】中成功调解双方',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.sect_politics;
+                    return storyline?.completed && storyline?.outcome === 'mediation';
+                },
+                reward: { spiritStone: 5000, pills: 30 }
+            },
+            
+            true_love_found: {
+                name: '仙侣情深',
+                desc: '在【仙缘情深】中结为道侣',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.immortal_romance;
+                    return storyline?.completed && storyline?.outcome === 'true_love';
+                },
+                reward: { spiritualPower: 20000, pills: 30 },
+                bonus: { spiritualPowerBonus: 0.1 }
+            },
+            
+            destiny_breaker: {
+                name: '破局者',
+                desc: '在【天命之战】中揭穿上古阴谋',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.destiny_war;
+                    return storyline?.completed && storyline?.outcome === 'truth_revealed';
+                },
+                reward: { spiritualPower: 100000, spiritStone: 20000 },
+                bonus: { spiritualPowerBonus: 0.2 }
+            },
+            
+            all_endings: {
+                name: '结局收藏家',
+                desc: '达成至少10种不同的剧情结局',
+                category: 'storyline',
+                check: () => {
+                    if (!gameData.storylines) return false;
+                    const uniqueOutcomes = new Set();
+                    for (let storyline of Object.values(gameData.storylines)) {
+                        if (storyline.completed && storyline.outcome) {
+                            uniqueOutcomes.add(storyline.outcome);
+                        }
+                    }
+                    return uniqueOutcomes.size >= 10;
+                },
+                reward: { spiritStone: 15000, spiritualPower: 80000, pills: 100 },
+                bonus: { spiritualPowerBonus: 0.25 }
+            },
+            
+            // ========== 练气期专属成就 ==========
+            qi_refining_beginner: {
+                name: '初入仙途',
+                desc: '完成练气期剧情【初入仙途】',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.beginner_path;
+                    return storyline?.completed;
+                },
+                reward: { spiritStone: 300, spiritualPower: 2000, pills: 5 }
+            },
+            
+            qi_refining_adventurer: {
+                name: '奇遇探索者',
+                desc: '完成练气期剧情【奇遇机缘】',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.fortuitous_encounter;
+                    return storyline?.completed;
+                },
+                reward: { spiritStone: 400, spiritualPower: 2500, pills: 8 }
+            },
+            
+            qi_refining_seeker: {
+                name: '寻师问道',
+                desc: '完成练气期剧情【寻师问道】',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.mentor_seeking;
+                    return storyline?.completed;
+                },
+                reward: { spiritStone: 500, spiritualPower: 3000, pills: 10 }
+            },
+            
+            qi_refining_master: {
+                name: '练气期大师',
+                desc: '完成所有练气期剧情线',
+                category: 'storyline',
+                check: () => {
+                    if (!gameData.storylines) return false;
+                    const qiRefiningStorylines = ['beginner_path', 'fortuitous_encounter', 'mentor_seeking'];
+                    return qiRefiningStorylines.every(id => 
+                        gameData.storylines[id] && gameData.storylines[id].completed
+                    );
+                },
+                reward: { spiritStone: 1500, spiritualPower: 10000, pills: 30 },
+                bonus: { spiritualPowerBonus: 0.08 }
+            },
+            
+            qi_refining_guidance: {
+                name: '名师指点',
+                desc: '在练气期剧情中获得完整指导',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.beginner_path;
+                    return storyline?.completed && storyline?.outcome === 'full_guidance';
+                },
+                reward: { spiritStone: 600, spiritualPower: 4000, pills: 12 }
+            },
+            
+            qi_refining_herb_master: {
+                name: '采药高手',
+                desc: '在练气期剧情中成功获得灵草',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.fortuitous_encounter;
+                    return storyline?.completed && storyline?.outcome === 'herb_master';
+                },
+                reward: { spiritStone: 500, spiritualPower: 3000, pills: 10 }
+            },
+            
+            qi_refining_mentor_recognition: {
+                name: '师父认可',
+                desc: '在练气期剧情中获得师父认可',
+                category: 'storyline',
+                check: () => {
+                    const storyline = gameData.storylines?.mentor_seeking;
+                    return storyline?.completed && storyline?.outcome === 'mentor_guidance';
+                },
+                reward: { spiritStone: 800, spiritualPower: 5000, pills: 15 }
+            },
+            
+            qi_refining_technique_learner: {
+                name: '功法初学者',
+                desc: '在练气期学会特殊功法',
+                category: 'storyline',
+                check: () => {
+                    return gameData.learnedTechniques && 
+                           (gameData.learnedTechniques['basic_meditation'] || 
+                            gameData.learnedTechniques['efficient_cultivation']);
+                },
+                reward: { spiritStone: 400, spiritualPower: 2500, pills: 8 }
+            },
+            
+            qi_refining_event_explorer: {
+                name: '练气期事件探索者',
+                desc: '触发10次练气期专属事件',
+                category: 'event',
+                check: () => {
+                    return (gameData.statistics?.qiRefiningEvents || 0) >= 10;
+                },
+                reward: { spiritStone: 300, spiritualPower: 2000, pills: 5 }
+            },
+            
+            qi_refining_quick_learner: {
+                name: '天赋异禀',
+                desc: '在练气期完成所有剧情线（隐藏成就）',
+                category: 'hidden',
+                hidden: true,
+                check: () => {
+                    if (!gameData.storylines) return false;
+                    const qiRefiningStorylines = ['beginner_path', 'fortuitous_encounter', 'mentor_seeking'];
+                    const allCompleted = qiRefiningStorylines.every(id => 
+                        gameData.storylines[id] && gameData.storylines[id].completed
+                    );
+                    // 必须在练气期完成（境界0）
+                    return allCompleted && gameData.player.realm === 0;
+                },
+                reward: { spiritStone: 2000, spiritualPower: 15000, pills: 50 },
+                bonus: { spiritualPowerBonus: 0.12 }
+            },
+            
+            dynamic_explorer: {
+                name: '动态事件探索者',
+                desc: '触发50次动态事件',
+                category: 'event',
+                check: () => {
+                    return (gameData.statistics?.dynamicEvents || 0) >= 50;
+                },
+                reward: { spiritStone: 5000, pills: 30 }
+            },
+            
+            event_master: {
+                name: '事件大师',
+                desc: '触发200次各类事件（普通+剧情+动态）',
+                category: 'event',
+                check: () => {
+                    const normal = gameData.statistics?.normalEvents || 0;
+                    const storyline = gameData.statistics?.storylineEvents || 0;
+                    const dynamic = gameData.statistics?.dynamicEvents || 0;
+                    return (normal + storyline + dynamic) >= 200;
+                },
+                reward: { spiritStone: 10000, spiritualPower: 50000, pills: 50 },
+                bonus: { spiritualPowerBonus: 0.1 }
             }
         };
+
+        // 渲染剧情线
+        function renderStorylines() {
+            if (typeof storylineManager === 'undefined') {
+                return;
+            }
+
+            const container = document.getElementById('storylinesContent');
+            if (!container) return;
+
+            let html = '';
+
+            // 获取所有剧情线（进行中和已完成）
+            const allStorylines = storylineManager.getAllStorylines();
+            
+            // 分类：进行中和已完成
+            const activeStorylines = allStorylines.filter(s => !s.completed);
+            const completedStorylines = allStorylines.filter(s => s.completed);
+
+            // 如果没有任何剧情线
+            if (allStorylines.length === 0) {
+                html += `<div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">📖</div>
+                    <div style="font-size: 16px; margin-bottom: 8px;">尚未开启任何剧情线</div>
+                    <div style="font-size: 13px; opacity: 0.7;">随着修炼的深入，你会遇到各种机缘...</div>
+                </div>`;
+                container.innerHTML = html;
+                return;
+            }
+
+            const categoryNames = {
+                adventure: '冒险',
+                sect: '宗门',
+                relationship: '情缘',
+                cultivation: '修炼'
+            };
+
+            const categoryColors = {
+                adventure: '#3498db',
+                sect: '#e74c3c',
+                relationship: '#e91e63',
+                cultivation: '#9b59b6'
+            };
+
+            const categoryIcons = {
+                adventure: getSvg('mountain'),
+                sect: getSvg('temple'),
+                relationship: getSvg('heart'),
+                cultivation: getSvg('zap')
+            };
+
+            // 进行中的剧情线
+            if (activeStorylines.length > 0) {
+                html += `<div style="margin-bottom: 30px;">`;
+                html += `<h3 style="font-size: 16px; margin-bottom: 15px; color: #2c3e50;">${getSvg('book')} 进行中的剧情</h3>`;
+                
+                activeStorylines.forEach(storyline => {
+                    const color = categoryColors[storyline.category] || '#95a5a6';
+                    const icon = categoryIcons[storyline.category] || '📖';
+                    const categoryName = categoryNames[storyline.category] || '未知';
+
+                    html += `<div style="background: white; border: 2px solid ${color}; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">`;
+                    
+                    // 标题行
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">`;
+                    html += `<div style="display: flex; align-items: center; gap: 8px;">`;
+                    html += `<span style="font-size: 20px;">${icon}</span>`;
+                    html += `<span style="font-size: 15px; font-weight: bold; color: #2c3e50;">${storyline.name}</span>`;
+                    html += `</div>`;
+                    html += `<span style="background: ${color}; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${categoryName}</span>`;
+                    html += `</div>`;
+                    
+                    // 进度条
+                    html += `<div style="margin-bottom: 8px;">`;
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">`;
+                    html += `<span style="font-size: 12px; color: #7f8c8d;">剧情进度</span>`;
+                    html += `<span style="font-size: 12px; color: #7f8c8d;">${storyline.completedStages} / ${storyline.totalStages}</span>`;
+                    html += `</div>`;
+                    html += `<div style="background: #ecf0f1; border-radius: 10px; height: 8px; overflow: hidden;">`;
+                    html += `<div style="background: ${color}; height: 100%; width: ${storyline.progress}%; transition: width 0.3s;"></div>`;
+                    html += `</div>`;
+                    html += `</div>`;
+                    
+                    html += `<div style="font-size: 12px; color: #95a5a6; font-style: italic;">继续修炼，等待剧情推进...</div>`;
+                    html += `</div>`;
+                });
+                
+                html += `</div>`;
+            }
+
+            // 已完成的剧情线
+            if (completedStorylines.length > 0) {
+                html += `<div>`;
+                html += `<h3 style="font-size: 16px; margin-bottom: 15px; color: #2c3e50;">${getSvg('sparkles')} 已完成的剧情</h3>`;
+                
+                completedStorylines.forEach(storyline => {
+                    const color = categoryColors[storyline.category] || '#95a5a6';
+                    const icon = categoryIcons[storyline.category] || '📖';
+                    const categoryName = categoryNames[storyline.category] || '未知';
+
+                    html += `<div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px; padding: 15px; margin-bottom: 12px; opacity: 0.9;">`;
+                    
+                    // 标题行
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">`;
+                    html += `<div style="display: flex; align-items: center; gap: 8px;">`;
+                    html += `<span style="font-size: 18px;">${icon}</span>`;
+                    html += `<span style="font-size: 14px; font-weight: bold; color: #2c3e50;">${storyline.name}</span>`;
+                    html += `<span style="color: #27ae60; font-size: 14px;">✓</span>`;
+                    html += `</div>`;
+                    html += `<span style="background: ${color}; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${categoryName}</span>`;
+                    html += `</div>`;
+                    
+                    // 结局信息
+                    if (storyline.outcome) {
+                        const storylineConfig = storylineManager.storylines[storyline.name];
+                        if (storylineConfig && storylineConfig.outcomes && storylineConfig.outcomes[storyline.outcome]) {
+                            const outcome = storylineConfig.outcomes[storyline.outcome];
+                            html += `<div style="font-size: 12px; color: #555; margin-top: 8px;">`;
+                            html += `<div style="font-weight: bold; margin-bottom: 3px;">结局：${outcome.name}</div>`;
+                            html += `<div style="opacity: 0.8;">${outcome.desc}</div>`;
+                            html += `</div>`;
+                        }
+                    }
+                    
+                    html += `</div>`;
+                });
+                
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+        }
 
         // 渲染成就
         function renderAchievements() {
@@ -7254,7 +7744,9 @@
                 'relationship': { name: `${icons.getIcon('users')} 人际关系`, achievements: [] },
                 'task': { name: `${icons.getIcon('list')} 任务成就`, achievements: [] },
                 'combat': { name: `${icons.getIcon('sword')} 战斗成就`, achievements: [] },
-                'hidden': { name: '⭐ 隐藏成就', achievements: [] }
+                'storyline': { name: `${getSvg('book')} 剧情成就`, achievements: [] },
+                'event': { name: `${getSvg('zap')} 事件成就`, achievements: [] },
+                'hidden': { name: `${getSvg('star')} 隐藏成就`, achievements: [] }
             };
             
             let completedCount = 0;
@@ -7332,7 +7824,7 @@
                     html += `<div class="facility-header">`;
                     // 动态替换成就名称中的emoji为SVG
                     let displayName = achievement.name;
-                    displayName = displayName.replace(/⭐/g, getSvg('star'));
+                    displayName = displayName.replace(/${getSvg('star')}/g, getSvg('star'));
                     displayName = displayName.replace(/✓/g, getSvg('check'));
                     
                     html += `<span class="facility-name">${achievement.isCompleted ? getSvg('check') + ' ' : achievement.hidden ? getSvg('star') + ' ' : ''}${displayName}</span>`;
@@ -7459,10 +7951,95 @@
             // 如果当前有事件正在进行，不触发新事件
             if (gameData.currentEvent) return;
             
-            // 50%概率触发事件（提升触发率）
-            if (Math.random() > 0.5) return;
+            // 检查事件触发间隔（平均10分钟触发一次）
+            const now = Date.now();
+            const timeSinceLastEvent = now - (gameData.lastEventTime || 0);
+            const minInterval = 10 * 60 * 1000; // 10分钟 = 600秒 = 600000毫秒
             
-            // 筛选符合条件的事件
+            // 如果距离上次事件时间太短，不触发新事件
+            if (timeSinceLastEvent < minInterval) return;
+            
+            // 基于时间间隔的概率计算（越久没触发，概率越高）
+            const maxInterval = 20 * 60 * 1000; // 20分钟最大间隔
+            const timeRatio = Math.min(1, (timeSinceLastEvent - minInterval) / (maxInterval - minInterval));
+            const baseProbability = 0.1; // 基础概率10%
+            const timeBonus = timeRatio * 0.4; // 时间加成最多40%
+            const totalProbability = baseProbability + timeBonus;
+            
+            // 如果随机数大于总概率，不触发事件
+            if (Math.random() > totalProbability) return;
+            
+            // 【新增】优先检查剧情线事件
+            if (typeof storylineManager !== 'undefined') {
+                // 检查是否有进行中的剧情线可以触发
+                const storylineId = storylineManager.shouldTriggerStorylineEvent();
+                if (storylineId) {
+                    const stageEvent = storylineManager.getCurrentStageEvent(storylineId);
+                    if (stageEvent) {
+                        // 触发剧情线事件
+                        gameData.currentEvent = {
+                            ...stageEvent,
+                            isStoryline: true,
+                            storylineId: storylineId
+                        };
+                        
+                        // 统计
+                        if (!gameData.statistics) gameData.statistics = {};
+                        gameData.statistics.storylineEvents = (gameData.statistics.storylineEvents || 0) + 1;
+                        
+                        showEvent(gameData.currentEvent);
+                        addLog(`<span class="log-important">${getSvg('book')} 剧情事件：${stageEvent.name}</span>`);
+                        return;
+                    }
+                }
+                
+                // 尝试开启新剧情线
+                if (Math.random() < 0.3) { // 30%概率开启新剧情线
+                    const newStorylineId = storylineManager.tryStartNewStoryline();
+                    if (newStorylineId) {
+                        const stageEvent = storylineManager.getCurrentStageEvent(newStorylineId);
+                        if (stageEvent) {
+                            gameData.currentEvent = {
+                                ...stageEvent,
+                                isStoryline: true,
+                                storylineId: newStorylineId
+                            };
+                            
+                            const storyline = storylineManager.storylines[newStorylineId];
+                            
+                            // 统计
+                            if (!gameData.statistics) gameData.statistics = {};
+                            gameData.statistics.storylineEvents = (gameData.statistics.storylineEvents || 0) + 1;
+                            
+                            showEvent(gameData.currentEvent);
+                            addLog(`<span class="log-success">${getSvg('star')} 新剧情开启：${storyline.name}</span>`);
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            // 【新增】尝试生成动态事件
+            if (typeof dynamicEventGenerator !== 'undefined' && Math.random() < 0.2) { // 20%概率生成动态事件
+                const dynamicEvent = dynamicEventGenerator.generateEvent();
+                if (dynamicEvent) {
+                    gameData.currentEvent = dynamicEvent;
+                    gameData.lastEventTime = Date.now();
+                    
+                    // 统计
+                    if (!gameData.statistics) gameData.statistics = {};
+                    gameData.statistics.dynamicEvents = (gameData.statistics.dynamicEvents || 0) + 1;
+                    
+                    showEvent(dynamicEvent);
+                    addLog(`<span class="log-success">${getSvg('sparkles')} 动态事件：${dynamicEvent.name}</span>`);
+                    return;
+                }
+            }
+            
+            // 触发普通事件（70%概率）
+            if (Math.random() > 0.7) return;
+            
+            // 筛选符合条件的普通事件
             const availableEvents = [];
             for (let id in randomEvents) {
                 const event = randomEvents[id];
@@ -7488,6 +8065,15 @@
             const event = availableEvents[Math.floor(Math.random() * availableEvents.length)];
             gameData.currentEvent = event;
             gameData.lastEventTime = Date.now();
+            
+            // 统计
+            if (!gameData.statistics) gameData.statistics = {};
+            gameData.statistics.normalEvents = (gameData.statistics.normalEvents || 0) + 1;
+            
+            // 练气期专属事件统计
+            if (gameData.player.realm === 0 && event.maxRealm === 0) {
+                gameData.statistics.qiRefiningEvents = (gameData.statistics.qiRefiningEvents || 0) + 1;
+            }
             
             // 显示事件
             showEvent(event);
@@ -7542,6 +8128,29 @@
             html += `</span>`;
             html += `</div>`;
             
+            // 【新增】如果是剧情线事件，显示进度
+            if (event.isStoryline && event.storylineId && typeof storylineManager !== 'undefined') {
+                const summary = storylineManager.getStorylineSummary(event.storylineId);
+                if (summary) {
+                    const categoryNames = {
+                        adventure: '冒险',
+                        sect: '宗门',
+                        relationship: '情缘',
+                        cultivation: '修炼'
+                    };
+                    html += `<div style="margin-bottom: 15px; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 6px; color: white;">`;
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">`;
+                    html += `<span style="font-size: 13px;">📖 剧情：${summary.name}</span>`;
+                    html += `<span style="font-size: 11px; opacity: 0.9;">${categoryNames[summary.category] || '未知'}</span>`;
+                    html += `</div>`;
+                    html += `<div style="background: rgba(255,255,255,0.2); border-radius: 10px; height: 6px; overflow: hidden;">`;
+                    html += `<div style="background: white; height: 100%; width: ${summary.progress}%; transition: width 0.3s;"></div>`;
+                    html += `</div>`;
+                    html += `<div style="font-size: 11px; margin-top: 3px; text-align: right; opacity: 0.9;">进度 ${summary.completedStages}/${summary.totalStages}</div>`;
+                    html += `</div>`;
+                }
+            }
+            
             // 事件描述
             html += `<div style="padding: 15px; background: #f8f9fa; border-radius: 6px; margin-bottom: 20px; color: #555; line-height: 1.8;">`;
             html += event.desc;
@@ -7570,8 +8179,29 @@
             const event = gameData.currentEvent;
             const choice = event.choices[choiceIndex];
             
-            // 执行选择结果
-            const resultText = choice.result();
+            let resultText;
+            
+            // 【新增】如果是剧情线事件，使用storylineManager处理
+            if (event.isStoryline && event.storylineId) {
+                resultText = storylineManager.progressStoryline(event.storylineId, choiceIndex);
+                
+                // 检查剧情是否完成
+                const active = storylineManager.activeStorylines[event.storylineId];
+                if (active && active.completed) {
+                    const storyline = storylineManager.storylines[event.storylineId];
+                    const outcome = storyline.outcomes[active.outcome];
+                    if (outcome) {
+                        resultText += `<br><br><div style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: white; text-align: center;">
+                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">${getSvg('sparkles')} 剧情完成 ${getSvg('sparkles')}</div>
+                            <div style="font-size: 14px; margin-bottom: 5px;">结局：${outcome.name}</div>
+                            <div style="font-size: 12px; opacity: 0.9;">${outcome.desc}</div>
+                        </div>`;
+                    }
+                }
+            } else {
+                // 普通事件
+                resultText = choice.result();
+            }
             
             // 显示结果
             const modal = document.getElementById('eventModal');
@@ -7852,11 +8482,31 @@
                 }
             }
             
-            // 技能加成
-            power += gameData.combatSkills.length * 20;
             
             // 法宝加成
             power += gameData.artifacts.length * 15;
+            
+            // 学习的功法加成
+            let techniqueBonus = 1.0;
+            if (gameData.learnedTechniques) {
+                for (let techId in gameData.learnedTechniques) {
+                    const techEffect = learnedTechniqueEffects[techId];
+                    if (techEffect) {
+                        for (let effect of techEffect.effects) {
+                            if (effect.type === 'attackBonus') {
+                                techniqueBonus += effect.value;
+                            } else if (effect.type === 'combatBonus') {
+                                techniqueBonus += effect.value;
+                            } else if (effect.type === 'allBonus') {
+                                techniqueBonus += effect.value * 0.5;
+                            } else if (effect.type === 'spiritualPower') {
+                                power += effect.value * 0.1;
+                            }
+                        }
+                    }
+                }
+            }
+            power = Math.floor(power * techniqueBonus);
             
             return Math.floor(power);
         }
@@ -8854,42 +9504,8 @@
             html += `<div style="font-size: 16px; font-weight: 700; color: #7f8c8d;">${elementInfo ? elementInfo.name : '未选择'}</div>`;
             html += `</div>`;
             
-            html += `<div class="facility-item" style="background: white; border: 1px solid #e0e0e0;">`;
-            html += `<div style="font-size: 14px; font-weight: 600; color: #2c3e50;">战斗技能</div>`;
-            html += `<div style="font-size: 16px; font-weight: 700; color: #7f8c8d;">${gameData.combatSkills ? gameData.combatSkills.length : 0}个</div>`;
-            html += `</div>`;
             html += `</div>`;
             
-            // 战斗技能区域
-            html += `<div style="margin-bottom: 20px;">`;
-            html += `<div style="font-size: 14px; font-weight: 600; color: #2c3e50; margin-bottom: 10px;">战斗技能</div>`;
-            html += `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">`;
-            
-            for (let skillId in combatSkills) {
-                const skill = combatSkills[skillId];
-                const hasSkill = gameData.combatSkills && gameData.combatSkills.includes(skillId);
-                const canLearn = gameData.player.realm >= (skill.requiredRealm || 0);
-                
-                html += `<div class="facility-item" style="${hasSkill ? 'background: linear-gradient(135deg, #3b82f622, #1d4ed822); border-color: #3b82f6;' : ''}">`;
-                html += `<div style="font-size: 13px; font-weight: 600; margin-bottom: 5px;">${skill.name}</div>`;
-                html += `<div style="font-size: 11px; color: #666; margin-bottom: 6px;">${skill.desc}</div>`;
-                html += `<div style="font-size: 11px; display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 3px;">`;
-                html += `<span style="background: #e8f5e9; color: #27ae60; padding: 2px 6px; border-radius: 3px;">伤害 ${skill.damage}x</span>`;
-                html += `<span style="background: #e3f2fd; color: #2196f3; padding: 2px 6px; border-radius: 3px;">消耗 ${skill.cost}灵力</span>`;
-                if (skill.cooldown) html += `<span style="background: #fff3e0; color: #f57c00; padding: 2px 6px; border-radius: 3px;">冷却 ${skill.cooldown}回合</span>`;
-                if (skill.critical) html += `<span style="background: #fce4ec; color: #c2185b; padding: 2px 6px; border-radius: 3px;">可暴击</span>`;
-                html += `</div>`;
-                if (!hasSkill && canLearn) {
-                    html += `<button class="btn" style="padding: 4px 8px; margin-top: 5px; font-size: 11px;" onclick="learnCombatSkill('${skillId}')">学习</button>`;
-                } else if (hasSkill) {
-                    html += `<div style="color: #27ae60; font-size: 11px; margin-top: 5px;">✓ 已学习</div>`;
-                } else {
-                    html += `<div style="color: #e74c3c; font-size: 11px; margin-top: 5px;">需要境界: ${realms[skill.requiredRealm || 0].name}</div>`;
-                }
-                html += `</div>`;
-            }
-            html += `</div>`;
-            html += `</div>`;
             
             // Boss战斗区域
             html += `<div style="margin-bottom: 25px;">`;
@@ -8941,8 +9557,9 @@
             
             for (let dungeonId in dungeonsConfig) {
                 const dungeon = dungeonsConfig[dungeonId];
-                const canEnter = gameData.player.realm >= dungeon.requiredRealm && 
-                                 gameData.player.realmLevel >= dungeon.requiredLevel;
+                const canEnter = gameData.player.realm > dungeon.requiredRealm || 
+                                 (gameData.player.realm === dungeon.requiredRealm && 
+                                  gameData.player.realmLevel >= dungeon.requiredLevel);
                 const completedTimes = (gameData.dungeonProgress && gameData.dungeonProgress[dungeonId]) || 0;
                 
                 html += `<div class="facility-item">`;
@@ -9124,46 +9741,6 @@
             return names[resKey] || resKey;
         }
 
-        // 学习战斗技能
-        function learnCombatSkill(skillId) {
-            const skill = combatSkills[skillId];
-            if (!skill) return;
-            
-            // 检查是否已学习
-            if (gameData.combatSkills && gameData.combatSkills.includes(skillId)) {
-                showNotification('已学习此技能', 'warning');
-                return;
-            }
-            
-            // 检查境界要求
-            if (skill.requiredRealm && gameData.player.realm < skill.requiredRealm) {
-                showNotification(`需要境界: ${realms[skill.requiredRealm].name}`, 'warning');
-                return;
-            }
-            
-            // 检查消耗
-            if (skill.cost && gameData.player.spiritualPower < skill.cost) {
-                showNotification('灵力不足', 'warning');
-                return;
-            }
-            
-            // 学习技能
-            if (!gameData.combatSkills) gameData.combatSkills = [];
-            gameData.combatSkills.push(skillId);
-            
-            // 消耗资源
-            if (skill.cost) {
-                gameData.player.spiritualPower -= skill.cost;
-            }
-            
-            addLog(`<span class="log-success">✓ 学习了战斗技能：${skill.name}</span>`);
-            showNotification(`学习了 ${skill.name}`, 'success');
-            
-            // 重新渲染战斗技能界面
-            renderCombatSkills();
-            updateUI();
-            saveGame();
-        }
 
         // 挑战Boss（优化版）
         function challengeBoss(bossId) {
@@ -9312,10 +9889,28 @@
             // 法宝加成
             power += gameData.artifacts.length * 30;
             
-            // 战斗技能加成
-            if (gameData.combatSkills) {
-                power += gameData.combatSkills.length * 25;
+            
+            // 学习的功法加成
+            let techniqueBonus = 1.0;
+            if (gameData.learnedTechniques) {
+                for (let techId in gameData.learnedTechniques) {
+                    const techEffect = learnedTechniqueEffects[techId];
+                    if (techEffect) {
+                        for (let effect of techEffect.effects) {
+                            if (effect.type === 'attackBonus') {
+                                techniqueBonus += effect.value;
+                            } else if (effect.type === 'combatBonus') {
+                                techniqueBonus += effect.value;
+                            } else if (effect.type === 'allBonus') {
+                                techniqueBonus += effect.value * 0.5;
+                            } else if (effect.type === 'spiritualPower') {
+                                power += effect.value * 0.1;
+                            }
+                        }
+                    }
+                }
             }
+            power = Math.floor(power * techniqueBonus);
             
             // 成就加成
             if (gameData.achievementBonuses.combatPowerBonus) {
@@ -9359,7 +9954,6 @@
             if (!dungeon) return;
             
             const modal = showModal('选择探索路径', '', []);
-            modal.style.maxWidth = '600px';
             
             let html = '';
             html += `<div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 6px;">`;
@@ -10125,42 +10719,6 @@
             container.innerHTML = html;
         }
         
-        // 渲染战斗技能（从战斗内容中提取）
-        function renderCombatSkills() {
-            const container = document.getElementById('combatSkillsContent');
-            if (!container) return;
-            
-            let html = '';
-            html += `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">`;
-            
-            for (let skillId in combatSkills) {
-                const skill = combatSkills[skillId];
-                const hasSkill = gameData.combatSkills && gameData.combatSkills.includes(skillId);
-                const canLearn = gameData.player.realm >= (skill.requiredRealm || 0);
-                
-                html += `<div class="facility-item" style="${hasSkill ? 'background: #e8f5e9; border-color: #4caf50;' : ''}">`;
-                html += `<div class="facility-name">${hasSkill ? '✓ ' : ''}${skill.name}</div>`;
-                html += `<div class="facility-desc" style="font-size: 11px;">${skill.desc}</div>`;
-                
-                if (!hasSkill) {
-                    if (!canLearn) {
-                        html += `<div class="cost-info">需要境界: ${realms[skill.requiredRealm].name}</div>`;
-                    } else {
-                        html += `<button class="btn btn-primary" onclick="learnCombatSkill('${skillId}')" style="font-size: 11px; padding: 4px 8px;">`;
-                        html += `学习`;
-                        html += `</button>`;
-                    }
-                }
-                html += `</div>`;
-            }
-            html += `</div>`;
-            
-            if (!combatSkills || Object.keys(combatSkills).length === 0) {
-                html = `<div class="facility-item"><div class="facility-desc">暂无可学习的战斗技能</div></div>`;
-            }
-            
-            container.innerHTML = html;
-        }
         
         // 渲染仙界飞升标签页
         function renderImmortalTab() {
@@ -10612,15 +11170,15 @@
                         gameData.materials.ironOre = Math.max(gameData.materials.ironOre || 0, 5);
                         gameData.materials.cloth = Math.max(gameData.materials.cloth || 0, 5);
                         gameData.materials.spiritCrystal = Math.max(gameData.materials.spiritCrystal || 0, 3);
-                        addLog('<span class="log-success">📜 获得了初始图纸：灵剑图纸、护体法衣图纸</span>');
-                        addLog('<span class="log-success">💰 获得了初始资源：500灵石、5铁矿石、5布料、3灵晶</span>');
+                        addLog(`<span class="log-success">${getSvg('book')} 获得了初始图纸：灵剑图纸、护体法衣图纸</span>`);
+                        addLog(`<span class="log-success">${getSvg('coin')} 获得了初始资源：500灵石、5铁矿石、5布料、3灵晶</span>`);
                     }
                     
                     // 计算离线收益（仅资源，不涨修为）
                     const offlineTime = (Date.now() - gameData.lastUpdate) / 1000; // 秒
                     if (offlineTime > 60) { // 超过1分钟才计算离线收益
                         const offlineMinutes = Math.floor(offlineTime / 60);
-                        // 仅计算资源收益，不增加灵力
+                        // 仅计算资源收益，不增加灵力，不增加突破进度
                         const stoneGain = Math.floor(offlineMinutes * 0.5); // 每分钟0.5灵石（来自灵田等）
                         const pillGain = Math.floor(offlineMinutes / 30); // 丹房每30分钟产1丹药
                         if (stoneGain > 0) gameData.player.spiritStone += stoneGain;
